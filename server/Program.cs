@@ -12,6 +12,7 @@ using server.Util;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton(ConfigurationHelper.ConfigureEnvironment(builder));
 Env.TraversePath().Load();
 var connectionString = Environment.GetEnvironmentVariable("DEV_DB_CONNECTION");
 var secret = Environment.GetEnvironmentVariable("SECRET");
@@ -57,6 +58,7 @@ builder.Services.AddScoped<DataSeeder>();
 // Register services
 builder.Services.AddScoped<ProfileSettingsService>();
 builder.Services.AddScoped<PrivacyService>();
+builder.Services.AddScoped<JwtService>();
 
 // Add controllers
 builder.Services.AddControllers();

@@ -8,5 +8,5 @@ public class UserChallenge
     public bool? IsCompleted { get; set; }
     public bool? IsRepeateble { get; set; }
     public int? TimesCompleted { get; set; }
-    
+    public virtual Challenge Challenge { get; set; }
 }
