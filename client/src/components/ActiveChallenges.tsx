@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 interface Challenge {
   title: string;
   progress: string;
@@ -9,6 +11,30 @@ interface ActiveChallengesProps {
 }
 
 function ActiveChallenges({ challenges }: ActiveChallengesProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [challengeName, setChallengeName] = useState('')
+  const [goalCount, setGoalCount] = useState('')
+  const [deadline, setDeadline] = useState('')
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log('New Challenge:', { challengeName, goalCount, deadline })
+    // Add your save logic here
+    
+    // Close modal and reset form
+    setIsModalOpen(false)
+    setChallengeName('')
+    setGoalCount('')
+    setDeadline('')
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setChallengeName('')
+    setGoalCount('')
+    setDeadline('')
+  }
+
   return (
     <section className="py-16 px-6 bg-bg">
       <div className="max-w-6xl mx-auto">
@@ -37,10 +63,86 @@ function ActiveChallenges({ challenges }: ActiveChallengesProps) {
         </div>
 
         {/* Add Challenge Button */}
-        <button className="font-semibold px-8 py-3 bg-border text-text border-none rounded-xl cursor-pointer transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="font-semibold px-8 py-3 bg-border text-text border-none rounded-xl cursor-pointer transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1"
+        >
           Add a challenge
         </button>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+          <div className="bg-accent rounded-3xl p-8 w-full max-w-md shadow-2xl relative">
+            {/* Close button */}
+            <button 
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-black hover:text-header text-2xl font-bold transition-colors"
+            >
+              ×
+            </button>
+
+            <h2 className="text-2xl font-heading font-bold text-black mb-6 text-center">
+              Add New Challenge
+            </h2>
+
+            <form onSubmit={handleSave}>
+              {/* Challenge Name Field */}
+              <div className="mb-6">
+                <label className="block mb-2 font-medium text-black text-left">
+                  Name of Activity
+                </label>
+                <input 
+                  type="text" 
+                  value={challengeName}
+                  onChange={(e) => setChallengeName(e.target.value)}
+                  placeholder="e.g., Walk & Talk" 
+                  required 
+                  className="w-full p-4 rounded-xl bg-[#978A74] text-black placeholder-bg border-none outline-none focus:ring-2 focus:ring-purple transition-all duration-300"
+                />
+              </div>
+
+              {/* Goal Count Field */}
+              <div className="mb-6">
+                <label className="block mb-2 font-medium text-black text-left">
+                  Goal (How many times)
+                </label>
+                <input 
+                  type="text" 
+                  value={goalCount}
+                  onChange={(e) => setGoalCount(e.target.value)}
+                  placeholder="e.g., 5 walks this week" 
+                  required 
+                  className="w-full p-4 rounded-xl bg-[#978A74] text-black placeholder-bg border-none outline-none focus:ring-2 focus:ring-purple transition-all duration-300"
+                />
+              </div>
+
+              {/* Deadline Field */}
+              <div className="mb-8">
+                <label className="block mb-2 font-medium text-black text-left">
+                  Deadline
+                </label>
+                <input 
+                  type="date" 
+                  value={deadline}
+                  onChange={(e) => setDeadline(e.target.value)}
+                  required 
+                  className="w-full p-4 rounded-xl bg-[#978A74] text-black border-none outline-none focus:ring-2 focus:ring-purple transition-all duration-300"
+                />
+              </div>
+
+              {/* Save Button */}
+              <button 
+                type="submit"
+                className="w-full font-semibold p-4 bg-border text-text border-none rounded-xl cursor-pointer transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1"
+              >
+                Save
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
