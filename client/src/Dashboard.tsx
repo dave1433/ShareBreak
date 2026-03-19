@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
 import dashboardImg from './assets/dasboard-img.jpg'
 import bigLogo from './assets/Logo-big.png'
+import ActiveChallenges from './components/ActiveChallenges'
+import LatestChallenges from './components/LatestChallenges'
+import Leaderboard from './components/Leaderboard'
 
 function Dashboard() {
   const handleLogout = () => {
@@ -9,6 +12,34 @@ function Dashboard() {
     // For now, just redirect to home
     window.location.href = '/'
   }
+
+  // Sample data for active challenges
+  const activeChallenges = [
+    { title: "Walk & Talk", progress: "3/5 walks this week", timeLeft: "ends in 2 days" },
+    { title: "Coffee Break Social", progress: "2/3 coffee breaks", timeLeft: "ends in 4 days" },
+    { title: "Lunch Away", progress: "4/5 lunches away", timeLeft: "ends in 1 day" },
+    { title: "Team Game Night", progress: "1/2 game sessions", timeLeft: "ends in 5 days" },
+    { title: "Morning Stretch", progress: "6/7 stretches", timeLeft: "ends in 3 days" },
+    { title: "Desk-Free Hour", progress: "2/5 hours tracked", timeLeft: "ends in 6 days" }
+  ]
+
+  // Sample data for latest activities
+  const latestActivities = [
+    "Mia started \"5K Steps Before Code\" – 2 hours ago",
+    "Jake completed \"Coffee Break Social\" – 5 hours ago",
+    "Emma joined \"Team Lunch Challenge\" – 1 day ago",
+    "Alex earned \"Social Butterfly\" badge – 1 day ago"
+  ]
+
+  // Sample data for leaderboard
+  const leaderboard = [
+    { rank: 1, name: "Sarah", points: 450 },
+    { rank: 2, name: "Mike", points: 420 },
+    { rank: 3, name: "Emma", points: 385 },
+    { rank: 4, name: "Jake", points: 360 },
+    { rank: 5, name: "Mia", points: 340 },
+    { rank: 6, name: "Alex", points: 315 }
+  ]
 
   return (
     <div className="min-h-screen bg-bg font-sans text-center">
@@ -52,7 +83,7 @@ function Dashboard() {
 
       {/* Dashboard Navigation Section */}
       <section className="bg-purple py-12 px-6">
-        <div className="max-w-6xl mx-auto flex justify-center items-center gap-6">
+        <div className="max-w-6xl mx-auto flex justify-center items-center gap-6 flex-wrap">
           <Link to="/profile">
             <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
               Profile Page
@@ -68,6 +99,11 @@ function Dashboard() {
           </button>
         </div>
       </section>
+
+      {/* Components */}
+      <ActiveChallenges challenges={activeChallenges} />
+      <LatestChallenges activities={latestActivities} />
+      <Leaderboard entries={leaderboard} />
 
       {/* Footer */}
       <footer className="bg-footer py-12 text-center">
