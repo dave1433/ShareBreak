@@ -65,7 +65,7 @@ function App() {
         <img 
           src={bigLogo} 
           alt="Reset Big Logo" 
-          className="absolute right-28 top-1/2 -translate-y-1/2 w-96 h-auto animate-slide-in-left z-20" 
+          className="absolute right-28 top-1/2 -translate-y-1/2 w-96 h-auto animate-slide-in-left z-20 hidden lg:block" 
         />
       </div>
         

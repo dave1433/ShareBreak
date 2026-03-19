@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.tsx'
 import Login from './Login.tsx'
 import Friends from './Friends.tsx'
+import Dashboard from './Dashboard.tsx'
 import { getToken } from './utils/auth'
 
 function ProtectedRoute({ element }: { element: React.ReactElement }) {
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
         <Route path="/friends" element={<ProtectedRoute element={<Friends />} />} />
       </Routes>
     </BrowserRouter>

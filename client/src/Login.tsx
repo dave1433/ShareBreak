@@ -48,7 +48,7 @@ function Login() {
       saveToken(data.Token)
       setIsLoggedIn(true)
       setCurrentUser({ email })
-      setTimeout(() => navigate('/friends'), 500)
+      setTimeout(() => navigate('/dashboard'), 500)
     } catch (error) {
       setAuthError('Login failed. Please try again.')
       setLoading(false)
@@ -82,7 +82,7 @@ function Login() {
       saveToken(data.Token)
       setIsLoggedIn(true)
       setCurrentUser({ email: regEmail })
-      setTimeout(() => navigate('/friends'), 500)
+      setTimeout(() => navigate('/dashboard'), 500)
     } catch (error) {
       setAuthError('Registration failed. Please try again.')
       setLoading(false)
@@ -94,7 +94,6 @@ function Login() {
       {/* Login/Register Card */}
       <div className="relative z-10 bg-bg rounded-3xl p-8 w-full max-w-md shadow-lg">
         {/* Back to Home Link */}
-        {/* heeeeeelp*/}
         <Link 
           to="/" 
           className="block w-fit mb-6 text-black no-underline hover:text-purple transition-colors duration-300"
