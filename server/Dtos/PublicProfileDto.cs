@@ -1,4 +1,4 @@
-namespace ShareBreak.Dtos;
+namespace server.Dtos;
 
 /// <summary>
 /// DTO for viewing another user's public profile.

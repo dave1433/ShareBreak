@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using ShareBreak.Dtos;
-using ShareBreak.Services;
+using server.Dtos;
+using server.Services;
 
-namespace ShareBreak.Controllers;
+namespace server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

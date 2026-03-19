@@ -1,4 +1,4 @@
-namespace ShareBreak.Dtos;
+namespace server.Dtos;
 
 /// <summary>
 /// Request DTO for updating notification preferences

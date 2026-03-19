@@ -1,6 +1,6 @@
-namespace ShareBreak.Services;
+namespace server.Services;
 
-using ShareBreak.Dtos;
+using server.Dtos;
 
 /// <summary>
 /// Service for managing user profile settings

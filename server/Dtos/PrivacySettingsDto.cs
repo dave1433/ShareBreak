@@ -1,15 +1,15 @@
-namespace ShareBreak.Dtos;
+namespace server.Dtos;
 
 /// <summary>
-/// Privacy levels: 0=Everyone, 1=Acquaintance, 2=Friend, 3=BestFriend, 4=Private
+/// Privacy levels: 0=Everyone, 1=Friend, 2=BestFriend, 3=Private
+/// Simplified model: Everyone (all users), Friend, BestFriend, Private (nobody)
 /// </summary>
 public enum VisibilityLevel
 {
     Everyone = 0,
-    Acquaintance = 1,
-    Friend = 2,
-    BestFriend = 3,
-    Private = 4
+    Friend = 1,
+    BestFriend = 2,
+    Private = 3
 }
 
 /// <summary>

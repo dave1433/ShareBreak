@@ -1,10 +1,11 @@
-namespace ShareBreak.Services;
+namespace server.Services;
 
-using ShareBreak.Dtos;
+using server.Dtos;
 
 /// <summary>
 /// Service for handling privacy and visibility logic
 /// Determines what data can be shown to a requesting user based on their relationship
+/// Simplified model: Everyone, Friend, BestFriend, Private
 /// </summary>
 public class PrivacyService
 {
@@ -14,14 +15,14 @@ public class PrivacyService
     public enum UserRelationship
     {
         Self = 0,           // Viewing own profile
-        BestFriend = 1,     // Best friend relationship
-        Friend = 2,         // Friend relationship
-        Acquaintance = 3,   // Acquaintance relationship
-        Stranger = 4        // No relationship
+        BestFriend = 1,     // Best friend relationship (isBestFriend = true)
+        Friend = 2,         // Friend relationship (isBestFriend = false)
+        Everyone = 3        // No relationship (public visibility)
     }
 
     /// <summary>
     /// Checks if a field should be visible based on privacy level and relationship
+    /// Privacy levels: 0=Everyone, 1=Friend, 2=BestFriend, 3=Private
     /// </summary>
     public static bool CanViewField(int fieldVisibility, UserRelationship relationship)
     {
@@ -34,7 +35,6 @@ public class PrivacyService
             UserRelationship.BestFriend => requiredVisibility switch
             {
                 VisibilityLevel.Everyone => true,
-                VisibilityLevel.Acquaintance => true,
                 VisibilityLevel.Friend => true,
                 VisibilityLevel.BestFriend => true,
                 VisibilityLevel.Private => false,
@@ -44,27 +44,15 @@ public class PrivacyService
             UserRelationship.Friend => requiredVisibility switch
             {
                 VisibilityLevel.Everyone => true,
-                VisibilityLevel.Acquaintance => true,
                 VisibilityLevel.Friend => true,
                 VisibilityLevel.BestFriend => false,
                 VisibilityLevel.Private => false,
                 _ => false
             },
 
-            UserRelationship.Acquaintance => requiredVisibility switch
+            UserRelationship.Everyone => requiredVisibility switch
             {
                 VisibilityLevel.Everyone => true,
-                VisibilityLevel.Acquaintance => true,
-                VisibilityLevel.Friend => false,
-                VisibilityLevel.BestFriend => false,
-                VisibilityLevel.Private => false,
-                _ => false
-            },
-
-            UserRelationship.Stranger => requiredVisibility switch
-            {
-                VisibilityLevel.Everyone => true,
-                VisibilityLevel.Acquaintance => false,
                 VisibilityLevel.Friend => false,
                 VisibilityLevel.BestFriend => false,
                 VisibilityLevel.Private => false,
@@ -76,8 +64,8 @@ public class PrivacyService
     }
 
     /// <summary>
-    /// Determines the relationship between two users.
-    /// TODO: Implement with actual friend relationship check from database
+    /// Determines the relationship between two users based on Friend entity
+    /// TODO: Inject IFriendRepository or DbContext to query Friend table
     /// </summary>
     public async Task<UserRelationship> GetUserRelationshipAsync(int viewingUserId, int profileOwnerId)
     {
@@ -85,8 +73,13 @@ public class PrivacyService
         if (viewingUserId == profileOwnerId)
             return UserRelationship.Self;
 
-        // TODO: Query database for friend relationship
-        // For now, return Stranger as stand-in
-        return UserRelationship.Stranger;
+        // TODO: Query Friend table:
+        // - Look for Friend record with UserId=viewingUserId, FriendId=profileOwnerId
+        // - If found and isBestFriend=true, return BestFriend
+        // - If found and isBestFriend=false, return Friend
+        // - If not found, return Everyone (no relationship)
+
+        // Stand-in for now
+        return UserRelationship.Everyone;
     }
 }
