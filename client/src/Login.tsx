@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom' // heeeeeelp
+import { Link, useNavigate } from 'react-router-dom'
 import loginLogo from './assets/logo-login.png'
+import { saveToken } from './utils/auth'
 
 function Login() {
+  const navigate = useNavigate()
   const [isRegistering, setIsRegistering] = useState(false)
   const [loading, setLoading] = useState(false)
   const [authError, setAuthError] = useState('')
@@ -28,17 +30,25 @@ function Login() {
     e.preventDefault()
     setLoading(true)
     setAuthError('')
-    
+
     try {
-      // Add your login logic here
-      console.log('Login:', { email, password })
-      
-      // Simulated success
-      setTimeout(() => {
-        setIsLoggedIn(true)
-        setCurrentUser({ email })
+      const res = await fetch('/api/login/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!res.ok) {
+        setAuthError('Login failed. Please check your credentials.')
         setLoading(false)
-      }, 1000)
+        return
+      }
+
+      const data = await res.json()
+      saveToken(data.Token)
+      setIsLoggedIn(true)
+      setCurrentUser({ email })
+      setTimeout(() => navigate('/friends'), 500)
     } catch (error) {
       setAuthError('Login failed. Please try again.')
       setLoading(false)
@@ -49,17 +59,30 @@ function Login() {
     e.preventDefault()
     setLoading(true)
     setAuthError('')
-    
+
     try {
-      // Add your register logic here
-      console.log('Register:', { regUserName, regBirthDate, regEmail, regPassword })
-      
-      // Simulated success
-      setTimeout(() => {
-        setIsLoggedIn(true)
-        setCurrentUser({ email: regEmail })
+      const res = await fetch('/api/login/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          Name: regUserName,
+          Birthday: regBirthDate,
+          Email: regEmail,
+          Password: regPassword,
+        }),
+      })
+
+      if (!res.ok) {
+        setAuthError('Registration failed. Please try again.')
         setLoading(false)
-      }, 1000)
+        return
+      }
+
+      const data = await res.json()
+      saveToken(data.Token)
+      setIsLoggedIn(true)
+      setCurrentUser({ email: regEmail })
+      setTimeout(() => navigate('/friends'), 500)
     } catch (error) {
       setAuthError('Registration failed. Please try again.')
       setLoading(false)

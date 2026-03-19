@@ -1,19 +1,47 @@
+import { useState, useEffect } from 'react'
 import heroImg from './assets/hero-img.jpg'
 import bigLogo from './assets/Logo-big.png'
 import { Link } from 'react-router-dom'
-
+import { getToken } from './utils/auth'
+import { apiGet } from './utils/api'
+import type { FriendRequestDto } from './types/friends'
 
 function App() {
+  const [pendingCount, setPendingCount] = useState(0)
+  const token = getToken()
+
+  useEffect(() => {
+    if (token) {
+      apiGet<FriendRequestDto[]>('friends/requests')
+        .then((reqs) => setPendingCount(reqs.length))
+        .catch(() => setPendingCount(0))
+    }
+  }, [token])
+
   return (
     <div className="min-h-screen bg-bg font-sans text-center">
       {/* Header */}
       <header className="bg-header bg-opacity-40 flex justify-between items-center px-10 py-4">
         <img src={bigLogo} alt="Reset Logo" className="h-10 w-auto" />
-        <Link to="/login">
-          <button className="bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105">
-            Login
-          </button>
-        </Link>
+        <div className="flex gap-4 items-center">
+          {token && (
+            <Link to="/friends">
+              <button className="relative bg-purple font-bold px-6 py-2 rounded-lg text-white transition-all duration-300 hover:opacity-90 hover:shadow-lg">
+                Friends
+                {pendingCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                    {pendingCount}
+                  </span>
+                )}
+              </button>
+            </Link>
+          )}
+          <Link to={token ? '#' : '/login'}>
+            <button className="bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105">
+              {token ? 'Profile' : 'Login'}
+            </button>
+          </Link>
+        </div>
       </header>
 
       {/* Hero Section */}

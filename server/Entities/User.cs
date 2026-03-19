@@ -9,6 +9,7 @@ public class User
     public string Birthday { get; set; }
     public bool IsDeleted { get; set; }
     public int TotalPoints { get; set; } = 0;
+    public DateTime? LastSeen { get; set; }
 
     // Navigation properties
     public List<Friend> Friends { get; set; } = new();

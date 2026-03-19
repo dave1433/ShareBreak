@@ -8,7 +8,7 @@ namespace server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ChallengeController(MyDbContext ctx, ChallengeService service) : ControllerBase
+public class ChallengeController(MyDbContext ctx, ChallengeService service, FriendService friendService) : ControllerBase
 {
     [HttpGet(nameof(GetAllPossibleChallenges))]
     public List<ChallengeDto> GetAllPossibleChallenges()
@@ -70,6 +70,19 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service) : Co
         if (request.isFinished)
         {
             userChallenge.TimesCompleted = (userChallenge.TimesCompleted ?? 0) + 1;
+
+            // Find other users who completed the same challenge and are friends
+            var otherCompletions = await ctx.UserChallenges
+                .Where(uc => uc.ChallengeId == request.ChallengeId && uc.UserId != request.UserId && uc.TimesCompleted > 0)
+                .ToListAsync();
+
+            foreach (var completion in otherCompletions)
+            {
+                await friendService.IncrementInteractionAsync(request.UserId, completion.UserId);
+            }
+
+            // Recalculate best friend
+            await friendService.RecalculateBestFriendAsync(request.UserId);
         }
         else
         {

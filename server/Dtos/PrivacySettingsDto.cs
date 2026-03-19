@@ -26,6 +26,7 @@ public class UpdatePrivacySettingsRequest
     public int FriendCountVisibility { get; set; } = (int)VisibilityLevel.Everyone;
     public int BadgesVisibility { get; set; } = (int)VisibilityLevel.Everyone;
     public int PointsVisibility { get; set; } = (int)VisibilityLevel.Everyone;
+    public int OnlineStatusVisibility { get; set; } = (int)VisibilityLevel.Everyone;
 }
 
 /// <summary>
@@ -43,4 +44,5 @@ public class PrivacySettingsResponse
     public int FriendCountVisibility { get; set; }
     public int BadgesVisibility { get; set; }
     public int PointsVisibility { get; set; }
+    public int OnlineStatusVisibility { get; set; }
 }
