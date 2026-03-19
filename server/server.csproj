@@ -9,14 +9,10 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.Authentication.JwtBearer.Extension" Version="1.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3" />
-    <PackageReference Include="DotNetEnv" Version="2.3.0" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
     <PackageReference Include="NSwag.AspNetCore" Version="14.6.3" />
     <PackageReference Include="NSwag.CodeGeneration.TypeScript" Version="14.6.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
   </ItemGroup>
 
