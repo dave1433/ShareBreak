@@ -12,11 +12,7 @@ using server;
 namespace server.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-<<<<<<<< HEAD:server/Migrations/20260319153218_InitialCreate.Designer.cs
-    [Migration("20260319153218_InitialCreate")]
-========
-    [Migration("20260319141800_InitialCreate")]
->>>>>>>> dcf9cc25dfb548177bebbfebdb19a601edd0b906:server/Migrations/20260319141800_InitialCreate.Designer.cs
+    [Migration("20260319164916_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -68,7 +64,6 @@ namespace server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-<<<<<<<< HEAD:server/Migrations/20260319153218_InitialCreate.Designer.cs
 
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
@@ -105,8 +100,6 @@ namespace server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-========
->>>>>>>> dcf9cc25dfb548177bebbfebdb19a601edd0b906:server/Migrations/20260319141800_InitialCreate.Designer.cs
 
                     b.Property<int>("FriendId")
                         .HasColumnType("integer");
