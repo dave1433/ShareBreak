@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using server.Entities;
@@ -31,22 +30,10 @@ public class LoginController(MyDbContext ctx, IConfiguration config, JwtService 
     [Produces<LoginResponseDto>]
     public async Task<LoginResponseDto> Register([FromBody] RegisterRequestDto request)
     {
-        var ValidatedBirthday = DateTime.UtcNow;
+        var validatedBirthday = ValidateBirthDateMethod(request.Birthday);
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
         {
             throw new ValidationException("E-mail and password are required.");
-        }
-
-        if (request.Birthday != null)
-        {
-            try
-            {
-                ValidatedBirthday = DateTime.Parse(request.Birthday, CultureInfo.InvariantCulture);
-            }
-            catch (FormatException)
-            {
-                throw new ValidationException("Invalid birthday.");
-            }
         }
 
         var userToRegister = new User
@@ -54,9 +41,7 @@ public class LoginController(MyDbContext ctx, IConfiguration config, JwtService 
             Name = request.Name,
             Email = request.Email,
             Password = GenerateHashPass.Generate(request.Password),
-            Birthday = request.Birthday == null
-                ? ValidatedBirthday.ToString(CultureInfo.InvariantCulture)
-                : string.Empty,
+            Birthday = validatedBirthday.ToString(CultureInfo.InvariantCulture),
             IsDeleted = false
         };
         ctx.Users.Add(userToRegister);
@@ -77,10 +62,21 @@ public class LoginController(MyDbContext ctx, IConfiguration config, JwtService 
         };
     }
 
+    private static DateTime ValidateBirthDateMethod(string? birthday)
+    {
+        if (string.IsNullOrWhiteSpace(birthday))
+            throw new ValidationException("Bith day of birth is required.");
+
+        if (!TryParse(birthday, out var parsedBirthday))
+            throw new ValidationException("Invalid date format for birthday. Expected format: YYYY-MM-DD.");
+
+        return parsedBirthday;
+    }
+
     public class LoginRequestDto
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public required string Email { get; set; }
+        public required string Password { get; set; }
     }
 
     public class RegisterRequestDto
