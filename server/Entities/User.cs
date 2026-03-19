@@ -12,6 +12,8 @@ public class User
 
     // Navigation properties
     public List<Friend> Friends { get; set; } = new();
+    public List<Friend> FriendOf { get; set; } = new();
     public ProfileBadge? ProfileBadge { get; set; }
     public List<CategoryBadge> CategoryBadges { get; set; } = new();
+    public List<UserChallenge> UserChallenges { get; set; } = new();
 }

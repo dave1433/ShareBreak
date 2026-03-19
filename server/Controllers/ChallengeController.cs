@@ -8,13 +8,22 @@ namespace server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ChallengeController(MyDbContext ctx, ChallengeService service) : ControllerBase
+public class ChallengeController : ControllerBase
 {
+    private readonly MyDbContext _ctx;
+    private readonly ChallengeService _service;
+
+    public ChallengeController(MyDbContext ctx, ChallengeService service)
+    {
+        _ctx = ctx;
+        _service = service;
+    }
+
     [HttpGet(nameof(GetAllPossibleChallenges))]
     public List<ChallengeDto> GetAllPossibleChallenges()
     {
-        var challenges = ctx.Challenges.Where(u => u.IsActive && u.EndDate > DateTime.UtcNow).ToHashSet();
-        return service.ConverChallengeToChallangeDto(challenges);
+        var challenges = _ctx.Challenges.Where(u => u.IsActive && u.EndDate > DateTime.UtcNow).ToHashSet();
+        return _service.ConverChallengeToChallangeDto(challenges);
     }
 
 
@@ -23,12 +32,12 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service) : Co
     {
         ChallengeService.CheckNullUserId(userId);
 
-        var userChallenges = await ctx.UserChallenges
+        var userChallenges = await _ctx.UserChallenges
             .Where(uc => uc.UserId == Guid.Parse(userId))
             .Include(uc => uc.Challenge)
             .ToHashSetAsync();
 
-        return service.ConvertToChallengeDto(userChallenges);
+        return _service.ConvertToChallengeDto(userChallenges);
     }
 
     [HttpGet(nameof(GetAllCompletedChallenges))]
@@ -36,11 +45,11 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service) : Co
     {
         ChallengeService.CheckNullUserId(userId);
 
-        var userChallenges = await ctx.UserChallenges
+        var userChallenges = await _ctx.UserChallenges
             .Where(uc => uc.UserId == Guid.Parse(userId) && uc.TimesCompleted > 0)
             .Include(uc => uc.Challenge)
             .ToHashSetAsync();
-        return service.ConvertToChallengeDto(userChallenges);
+        return _service.ConvertToChallengeDto(userChallenges);
     }
 
     [HttpGet(nameof(GetAllPendingChallenges))]
@@ -48,18 +57,18 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service) : Co
     {
         ChallengeService.CheckNullUserId(userId);
 
-        var userChallenges = await ctx.UserChallenges
+        var userChallenges = await _ctx.UserChallenges
             .Where(uc => uc.UserId == Guid.Parse(userId) && uc.TimesCompleted == 0)
             .Include(uc => uc.Challenge)
             .ToHashSetAsync();
-        return service.ConvertToChallengeDto(userChallenges);
+        return _service.ConvertToChallengeDto(userChallenges);
     }
 
     [HttpPost(nameof(FinishChallenge))]
     public async Task<IActionResult> FinishChallenge([FromBody] FinishChallengeRequestDto request)
     {
         ChallengeService.CheckNullUserId(request.UserId.ToString());
-        var userChallenge = await ctx.UserChallenges.FirstOrDefaultAsync(uc =>
+        var userChallenge = await _ctx.UserChallenges.FirstOrDefaultAsync(uc =>
             uc.UserId == request.UserId && uc.ChallengeId == request.ChallengeId);
         if (userChallenge == null)
         {
@@ -76,7 +85,7 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service) : Co
             userChallenge.TimesCompleted = (userChallenge.TimesCompleted ?? 1) - 1;
         }
 
-        await ctx.SaveChangesAsync();
+        await _ctx.SaveChangesAsync();
         return Ok("Challenge status updated successfully.");
     }
 
@@ -84,7 +93,7 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service) : Co
     public async Task<IActionResult> ActivateChallenge([FromBody] ActivateChallengeRequestDto request)
     {
         ChallengeService.CheckNullUserId(request.UserId.ToString());
-        var challenge = await ctx.Challenges.FirstOrDefaultAsync(c => c.Id == request.ChallengeId && c.IsActive);
+        var challenge = await _ctx.Challenges.FirstOrDefaultAsync(c => c.Id == request.ChallengeId && c.IsActive);
         var userChallenge = new UserChallenge
         {
             ChallengeId = request.ChallengeId,
@@ -93,8 +102,8 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service) : Co
             TimesCompleted = 0,
             IsRepeateble = challenge?.IsRepeateble ?? false
         };
-        ctx.UserChallenges.Add(userChallenge);
-        await ctx.SaveChangesAsync();
+        _ctx.UserChallenges.Add(userChallenge);
+        await _ctx.SaveChangesAsync();
         return Ok("Challenge activated successfully.");
     }
 }

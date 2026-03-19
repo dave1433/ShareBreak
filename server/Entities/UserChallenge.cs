@@ -8,5 +8,6 @@ public class UserChallenge
     public bool? IsCompleted { get; set; }
     public bool? IsRepeateble { get; set; }
     public int? TimesCompleted { get; set; }
-    public virtual Challenge Challenge { get; set; }
+    public virtual User User { get; set; } = null!;
+    public virtual Challenge Challenge { get; set; } = null!;
 }

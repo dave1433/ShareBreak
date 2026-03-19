@@ -11,5 +11,7 @@ public class Challenge
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public int? Points { get; set; }
-    
+
+    public Category Category { get; set; } = null!;
+    public List<UserChallenge> UserChallenges { get; set; } = new();
 }

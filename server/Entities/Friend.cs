@@ -9,4 +9,5 @@ public class Friend
 
     // Navigation
     public User User { get; set; } = null!;
+    public User FriendUser { get; set; } = null!;
 }
