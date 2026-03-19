@@ -1,29 +1,21 @@
-using ShareBreak.Services;
+using DotNetEnv;
+using server;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+Env.TraversePath().Load();
+var connectionString = Environment.GetEnvironmentVariable("DEV_DB_CONNECTION");
 
-// Add services to the container
-builder.Services.AddScoped<ProfileSettingsService>();
-builder.Services.AddScoped<PrivacyService>();
-builder.Services.AddControllers();
-
-// Add CORS if needed
-builder.Services.AddCors(options =>
+if (string.IsNullOrWhiteSpace(connectionString))
 {
-    options.AddPolicy("AllowAll", policyBuilder =>
-    {
-        policyBuilder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-});
+	throw new Exception("DEV_DB_CONNECTION was not found.");
+}
+
+builder.Services.AddDbContext<MyDbContext>(options =>
+	options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 
-// Configure middleware
-app.UseCors("AllowAll");
-app.MapControllers();
+app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/", () => "ShareBreak API - Profile Settings Service");
-
-await app.RunAsync();
+app.Run();
