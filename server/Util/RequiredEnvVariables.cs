@@ -6,7 +6,7 @@ public static class RequiredEnvVariables
     {
         return
         [
-            "DEV_DB_CONNECTION", "SECRET", "SUPER_USER_NAME", "SUPER_PASSWORD"
+            "DEV_DB_CONNECTION", "SECRET", "SUPER_USER_EMAIL", "SUPER_PASSWORD"
         ];
     }
 }
