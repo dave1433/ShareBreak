@@ -1,5 +1,6 @@
 using DotNetEnv;
 using server;
+using server.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +15,17 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddDbContext<MyDbContext>(options =>
 	options.UseNpgsql(connectionString));
 
+// Register services
+builder.Services.AddScoped<ProfileSettingsService>();
+builder.Services.AddScoped<PrivacyService>();
+
+// Add controllers
+builder.Services.AddControllers();
+
 var app = builder.Build();
+
+// Map controllers
+app.MapControllers();
 
 app.MapGet("/", () => "Hello World!");
 

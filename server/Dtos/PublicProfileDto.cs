@@ -17,7 +17,8 @@ public class PublicProfileDto
     public int? FriendCount { get; set; }
     public int? ChallengesCompleted { get; set; }
     public int? TotalPoints { get; set; }
-    public List<string>? Badges { get; set; }
+    public ProfileBadgeDto? ProfileBadge { get; set; }
+    public List<CategoryBadgeDto>? CategoryBadges { get; set; }
     public List<PublicFriendDto>? Friends { get; set; }
 }
 
