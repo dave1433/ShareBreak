@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using server.Entities;
 using server.Util;
+using static System.DateTime;
 
 namespace server.Controllers;
 
@@ -24,6 +27,43 @@ public class LoginController(MyDbContext ctx, IConfiguration config, JwtService 
         return ConvertUserToLoginResponse(user);
     }
 
+    [HttpPost(nameof(Register))]
+    [Produces<LoginResponseDto>]
+    public async Task<LoginResponseDto> Register([FromBody] RegisterRequestDto request)
+    {
+        var ValidatedBirthday = DateTime.UtcNow;
+        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+        {
+            throw new ValidationException("E-mail and password are required.");
+        }
+
+        if (request.Birthday != null)
+        {
+            try
+            {
+                ValidatedBirthday = DateTime.Parse(request.Birthday, CultureInfo.InvariantCulture);
+            }
+            catch (FormatException)
+            {
+                throw new ValidationException("Invalid birthday.");
+            }
+        }
+
+        var userToRegister = new User
+        {
+            Name = request.Name,
+            Email = request.Email,
+            Password = GenerateHashPass.Generate(request.Password),
+            Birthday = request.Birthday == null
+                ? ValidatedBirthday.ToString(CultureInfo.InvariantCulture)
+                : string.Empty,
+            IsDeleted = false
+        };
+        ctx.Users.Add(userToRegister);
+        await ctx.SaveChangesAsync();
+        return ConvertUserToLoginResponse(userToRegister);
+    }
+
 
     private LoginResponseDto ConvertUserToLoginResponse(User user)
     {
@@ -31,7 +71,7 @@ public class LoginController(MyDbContext ctx, IConfiguration config, JwtService 
         return new LoginResponseDto
         {
             Token = token,
-            Expiration = DateTime.UtcNow.AddHours(24),
+            Expiration = UtcNow.AddHours(24),
             Email = user.Email,
             UserName = user.Name
         };
@@ -41,6 +81,14 @@ public class LoginController(MyDbContext ctx, IConfiguration config, JwtService 
     {
         public string Email { get; set; }
         public string Password { get; set; }
+    }
+
+    public class RegisterRequestDto
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string? Birthday { get; set; }
     }
 
     public class LoginResponseDto
