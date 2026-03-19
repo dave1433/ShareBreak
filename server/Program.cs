@@ -30,8 +30,8 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 	options.UseNpgsql(connectionString));
 builder.Services.AddOpenApiDocument(document =>
 {
-	document.Title = "WindMill API";
-	document.Description = "API for controlling and monitoring wind turbines.";
+	document.Title = "ShareBreak API";
+	document.Description = "Social app for meeting people outdoors in the real world.";
 	document.Version = "v1";
 	document.AddSecurity("Bearer", new OpenApiSecurityScheme
 	{
