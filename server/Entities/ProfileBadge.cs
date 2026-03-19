@@ -5,8 +5,8 @@
 /// </summary>
 public class ProfileBadge
 {
-    public int Id { get; set; }
-    public int UserId { get; set; }
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     public int Tier { get; set; } // 0=Bronze, 1=Silver, 2=Gold, 3=Platinum, 4=Diamond
     public DateTime EarnedAt { get; set; }
 

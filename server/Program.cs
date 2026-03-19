@@ -31,7 +31,7 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 builder.Services.AddOpenApiDocument(document =>
 {
 	document.Title = "ShareBreak API";
-	document.Description = "Social app for meeting people outdoors in the real world.";
+	document.Description = "Social app for meeting people outdoors and building connections.";
 	document.Version = "v1";
 	document.AddSecurity("Bearer", new OpenApiSecurityScheme
 	{

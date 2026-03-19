@@ -17,13 +17,15 @@ public class DataSeeder(MyDbContext ctx, IConfiguration config)
             var usersList = await ctx.Users.ToListAsync();
             var existingUserEmails = usersList.Select(u => u.Email).ToHashSet();
             var pepper = config["SECRET"]?.Substring(0, 16);
+            var adminBirthday = config["SUPER_USER_BIRTHDAY"] ?? "2000-01-01";
 
             var usersToAdd = new[]
             {
                 new User
                 {
                     Name = config["SUPER_USER_NAME"] ?? "Admin",
-                    Email = config["SUPER_USER_Email"] ?? "admin@dev.com",
+                    Email = config["SUPER_USER_EMAIL"] ?? "admin@dev.com",
+                    Birthday = adminBirthday,
                     Password = GenerateHashPass.Generate(config["SUPER_PASSWORD"] ?? "adminpass", pepper)
                 }
             };
