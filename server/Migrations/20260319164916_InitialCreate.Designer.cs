@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using server;
@@ -11,9 +12,11 @@ using server;
 namespace server.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260319164916_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,22 +46,15 @@ namespace server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Category")
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("EarnedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Tier")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("CategoryBadges");
                 });
@@ -96,8 +92,6 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("Challenges");
                 });
 
@@ -107,20 +101,16 @@ namespace server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("FriendId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("FriendId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsBestFriend")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FriendId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Friends");
                 });
@@ -131,19 +121,15 @@ namespace server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("EarnedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("bytea");
 
-                    b.Property<int>("Tier")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("ProfileBadges");
                 });
@@ -173,9 +159,6 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TotalPoints")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -204,105 +187,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChallengeId");
-
-                    b.HasIndex("UserId");
-
                     b.ToTable("UserChallenges");
-                });
-
-            modelBuilder.Entity("server.Entities.CategoryBadge", b =>
-                {
-                    b.HasOne("server.Entities.User", "User")
-                        .WithMany("CategoryBadges")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("server.Entities.Challenge", b =>
-                {
-                    b.HasOne("server.Entities.Category", "Category")
-                        .WithMany("Challenges")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("server.Entities.Friend", b =>
-                {
-                    b.HasOne("server.Entities.User", "FriendUser")
-                        .WithMany("FriendOf")
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("server.Entities.User", "User")
-                        .WithMany("Friends")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FriendUser");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("server.Entities.ProfileBadge", b =>
-                {
-                    b.HasOne("server.Entities.User", "User")
-                        .WithOne("ProfileBadge")
-                        .HasForeignKey("server.Entities.ProfileBadge", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("server.Entities.UserChallenge", b =>
-                {
-                    b.HasOne("server.Entities.Challenge", "Challenge")
-                        .WithMany("UserChallenges")
-                        .HasForeignKey("ChallengeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("server.Entities.User", "User")
-                        .WithMany("UserChallenges")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Challenge");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("server.Entities.Category", b =>
-                {
-                    b.Navigation("Challenges");
-                });
-
-            modelBuilder.Entity("server.Entities.Challenge", b =>
-                {
-                    b.Navigation("UserChallenges");
-                });
-
-            modelBuilder.Entity("server.Entities.User", b =>
-                {
-                    b.Navigation("CategoryBadges");
-
-                    b.Navigation("FriendOf");
-
-                    b.Navigation("Friends");
-
-                    b.Navigation("ProfileBadge");
-
-                    b.Navigation("UserChallenges");
                 });
 #pragma warning restore 612, 618
         }

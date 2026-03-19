@@ -3,6 +3,7 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.CSharp.RuntimeBinder;
 using server;
+using server.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NSwag;
@@ -11,6 +12,7 @@ using server.Util;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton(ConfigurationHelper.ConfigureEnvironment(builder));
 Env.TraversePath().Load();
 var connectionString = Environment.GetEnvironmentVariable("DEV_DB_CONNECTION");
 var secret = Environment.GetEnvironmentVariable("SECRET");
@@ -29,8 +31,8 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 	options.UseNpgsql(connectionString));
 builder.Services.AddOpenApiDocument(document =>
 {
-	document.Title = "WindMill API";
-	document.Description = "API for controlling and monitoring wind turbines.";
+	document.Title = "ShareBreak API";
+	document.Description = "Social app for meeting people outdoors and building connections.";
 	document.Version = "v1";
 	document.AddSecurity("Bearer", new OpenApiSecurityScheme
 	{
@@ -53,11 +55,28 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<DataSeeder>();
 
+// Register services
+builder.Services.AddScoped<ProfileSettingsService>();
+builder.Services.AddScoped<PrivacyService>();
+builder.Services.AddScoped<ChallengeService>();
+builder.Services.AddScoped<JwtService>();
+
+// Add controllers
+builder.Services.AddControllers();
+
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
 	var dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
 	await dataSeeder.Initialize();
 }
+
+app.UseOpenApi();
+app.UseSwaggerUi();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 await app.RunAsync();

@@ -2,8 +2,12 @@
 
 public class Friend
 {
-    public int Id { get; set; }
-    public int UserId { get; set; }
-    public int FriendId { get; set; }
-    public bool isBestFriend { get; set; }
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public Guid FriendId { get; set; }
+    public bool IsBestFriend { get; set; }
+
+    // Navigation
+    public User User { get; set; } = null!;
+    public User FriendUser { get; set; } = null!;
 }
