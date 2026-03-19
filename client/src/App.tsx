@@ -1,5 +1,7 @@
 import heroImg from './assets/hero-img.jpg'
 import bigLogo from './assets/Logo-big.png'
+import { Link } from 'react-router-dom'
+
 
 function App() {
   return (
@@ -7,9 +9,11 @@ function App() {
       {/* Header */}
       <header className="bg-header bg-opacity-40 flex justify-between items-center px-10 py-4">
         <img src={bigLogo} alt="Reset Logo" className="h-10 w-auto" />
-        <button className="bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105">
-          Login
-        </button>
+        <Link to="/login">
+          <button className="bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105">
+            Login
+          </button>
+        </Link>
       </header>
 
       {/* Hero Section */}
@@ -44,9 +48,11 @@ function App() {
           <p className="text-white text-clamp-base mb-8 leading-relaxed">
             You spend 8+ hours a day connected to screens—Slack, Jira, GitHub, Zoom—but how connected are you to the people beside you? Re:set is the first wellbeing companion that helps developers and tech teams step away from the desk together. Log your offline moments—a coffee run, a lunch walk, a game after work—earn badges for real connection, and watch your team's social health grow. Because the best fix for digital exhaustion isn't another notification. It's actually hanging out.
           </p>
-          <button className="bg-border px-8 py-3 font-bold rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
-            Get started
-          </button>
+          <Link to="/login">
+            <button className="bg-border px-8 py-3 font-bold rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
+              Get started
+            </button>
+          </Link>
         </div>
       </section>
 
