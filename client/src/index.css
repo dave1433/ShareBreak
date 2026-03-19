@@ -9,7 +9,7 @@
 }
 
 .text-clamp-h1 {
-  font-size: clamp(5.25rem, 1.5rem + 3vw, 3.5rem);
+  font-size: clamp(.25rem, 1.5rem + 3vw, 3.5rem);
 }
 
 .text-clamp-h2 {
@@ -34,4 +34,20 @@
 
 .animate-slide-in-left {
   animation: slideInLeft 0.8s ease-out;
+}
+
+/* Slide-in animation from left (for ProfilePage - no vertical centering) */
+@keyframes slideInLeftSimple {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left-simple {
+  animation: slideInLeftSimple 0.8s ease-out;
 }

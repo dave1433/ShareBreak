@@ -50,8 +50,24 @@ function Dashboard() {
         />
       </div>
 
-      {/* Dashboard Content */}
-      
+      {/* Dashboard Navigation Section */}
+      <section className="bg-purple py-12 px-6">
+        <div className="max-w-6xl mx-auto flex justify-center items-center gap-6">
+          <Link to="/profile">
+            <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
+              Profile Page
+            </button>
+          </Link>
+          
+          <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
+            Your Badges
+          </button>
+          
+          <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
+            Competition Page
+          </button>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="bg-footer py-12 text-center">
