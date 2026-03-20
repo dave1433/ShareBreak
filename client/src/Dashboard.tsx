@@ -146,9 +146,11 @@ function Dashboard() {
             </button>
           </Link>
           
-          <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
-            Your Badges
-          </button>
+          <Link to="/badges">
+            <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
+              Your Badges
+            </button>
+          </Link>
           
           <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
             Competition Page

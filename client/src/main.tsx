@@ -21,6 +21,7 @@ createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/badgesSection" element{</badgesSection>}/>
           <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
           <Route path="/friends" element={<ProtectedRoute element={<Friends />} />} />
           <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
