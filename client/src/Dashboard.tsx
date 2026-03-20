@@ -1,29 +1,38 @@
-import { Link } from 'react-router-dom'
+import { useState, useCallback, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import dashboardImg from './assets/dasboard-img.jpg'
 import bigLogo from './assets/Logo-big.png'
 import ActiveChallenges, { type ActiveChallengeCard } from './components/ActiveChallenges'
 import LatestChallenges from './components/LatestChallenges'
 import Leaderboard from './components/Leaderboard'
-import { useCallback, useEffect, useState } from 'react'
 import { getAllPendingChallenges, type ChallengeDto } from '../Api/ChallangesApi'
 import { getCurrentUserId, clearAuthData } from './utils/auth'
+import { apiGet } from './utils/api'
+import type { FriendRequestDto } from './types/friends'
 
 function Dashboard() {
+  const navigate = useNavigate()
+  const [pendingCount, setPendingCount] = useState(0)
+  const [activeChallenges, setActiveChallenges] = useState<ActiveChallengeCard[]>([])
+  const [latestActivities, setLatestActivities] = useState<string[]>([])
+  const [leaderboard] = useState<Array<{ rank: number; name: string; points: number }>>([])
+
+  // Load friend requests
+  const loadPendingRequests = useCallback(() => {
+    apiGet<FriendRequestDto[]>('friends/requests')
+      .then((reqs) => setPendingCount(reqs.length))
+      .catch(() => setPendingCount(0))
+  }, [])
+
   const handleLogout = () => {
     clearAuthData()
-    console.log('Logging out...')
-
-    window.location.href = '/'
+    navigate('/')
   }
 
-  // Sample data for active challenges
-  const [activeChallenges, setActiveChallenges] = useState<ActiveChallengeCard[]>([])
-
-  const [latestActivities, setLatestActivities] = useState<string[]>([])
-
-  const [leaderboard] = useState<
-    Array<{ rank: number; name: string; points: number }>
-  >([])
+  // Load pending requests on mount
+  useEffect(() => {
+    loadPendingRequests()
+  }, [loadPendingRequests])
 
   const refreshActiveChallenges = useCallback(async () => {
     try {
@@ -83,12 +92,24 @@ function Dashboard() {
         <Link to="/">
           <img src={bigLogo} alt="Reset Logo" className="h-10 w-auto" />
         </Link>
-        <button 
-          onClick={handleLogout}
-          className="bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105"
-        >
-          Logout
-        </button>
+        <div className="flex gap-4 items-center">
+          <Link to="/friends">
+            <button className="relative bg-purple font-bold px-6 py-2 rounded-lg text-white transition-all duration-300 hover:opacity-90 hover:shadow-lg">
+              Friends
+              {pendingCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                  {pendingCount}
+                </span>
+              )}
+            </button>
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105"
+          >
+            Logout
+          </button>
+        </div>
       </header>
 
       {/* Hero Section */}

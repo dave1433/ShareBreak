@@ -41,10 +41,39 @@ function getUserIdFromPayload(payload: Record<string, unknown> | null): string |
   return null
 }
 
+// Save token to localStorage
+export function saveToken(token: string): void {
+  localStorage.setItem('token', token)
+}
+
+// Get token from localStorage or sessionStorage
+export function getToken(): string | null {
+  return readStringStorage(['token', 'jwt', 'auth_token'])
+}
+
+// Clear only token
+export function clearToken(): void {
+  localStorage.removeItem('token')
+  sessionStorage.removeItem('token')
+}
+
+// Get auth headers for API calls
+export function authHeaders(): Record<string, string> {
+  const token = getToken()
+  if (!token) return {}
+  return { Authorization: `Bearer ${token}` }
+}
+
+// Check if user is authenticated
+export function isAuthenticated(): boolean {
+  return getToken() !== null
+}
+
 export function extractUserIdFromToken(token: string): string | null {
   return getUserIdFromPayload(decodeJwtPayload(token))
 }
 
+// Get current user ID from token or storage
 export function getCurrentUserId(): string | null {
   const directUserId = readStringStorage(['userId', 'user_id', 'auth_user_id'])
   if (directUserId) return directUserId
@@ -55,6 +84,7 @@ export function getCurrentUserId(): string | null {
   return getUserIdFromPayload(decodeJwtPayload(token)) ?? import.meta.env.VITE_DEFAULT_USER_ID ?? null
 }
 
+// Clear all auth data including token and userId
 export function clearAuthData() {
   for (const key of ['token', 'jwt', 'auth_token']) {
     localStorage.removeItem(key)

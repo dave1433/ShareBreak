@@ -67,6 +67,7 @@ builder.Services.AddScoped<DataSeeder>();
 builder.Services.AddScoped<ProfileSettingsService>();
 builder.Services.AddScoped<PrivacyService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<FriendService>();
 builder.Services.AddScoped<ChallengeService>();
 
 // Add controllers
