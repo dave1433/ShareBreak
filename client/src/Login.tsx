@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLogin } from './hooks/useLogin'
-import { useRegister } from './hooks/useRegister'
 import RegistrationForm from './RegistrationForm'
 import loginLogo from './assets/logo-login.png'
 
@@ -16,13 +15,6 @@ function Login() {
     loading: loginLoading,
     error: loginError,
   } = useLogin()
-  const {
-    username,
-    birthDate,
-    setUsername,
-    setBirthDate,
-    loading: registerLoading,
-  } = useRegister()
 
   const toggleForm = () => {
     setIsRegistering(!isRegistering)
