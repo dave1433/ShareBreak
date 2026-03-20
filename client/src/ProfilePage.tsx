@@ -1,24 +1,27 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { apiGet, apiPut } from './utils/api'
+import { clearAuthData } from './utils/auth'
 import bigLogo from './assets/Logo-big.png'
 import loginLogo from './assets/logo-login.png'
 
 function ProfilePage() {
+  const navigate = useNavigate()
+
   const handleLogout = () => {
-    // Add your logout logic here
-    console.log('Logging out...')
-    // For now, just redirect to home
-    window.location.href = '/'
+    clearAuthData()
+    navigate('/login', { replace: true })
   }
 
   // Form state
-  const [name, setName] = useState('John Doe')
-  const [email, setEmail] = useState('john.doe@example.com')
-  const [birthday, setBirthday] = useState('1990-01-01')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [birthday, setBirthday] = useState('')
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [loadingProfile, setLoadingProfile] = useState(true)
+  const [profileError, setProfileError] = useState('')
 
   // Privacy settings state
   const [onlineStatusVisibility, setOnlineStatusVisibility] = useState('Everyone')
@@ -26,10 +29,33 @@ function ProfilePage() {
   const [loadingPrivacy, setLoadingPrivacy] = useState(false)
   const [privacyMessage, setPrivacyMessage] = useState('')
 
-  // Load privacy settings on mount
+  // Load user profile and privacy settings on mount
   useEffect(() => {
+    loadUserProfile()
     loadPrivacySettings()
   }, [])
+
+  const loadUserProfile = async () => {
+    try {
+      const profile = await apiGet('login/profile')
+      setName(profile.name || '')
+      setEmail(profile.email || '')
+      // Convert birthday format from "MM/DD/YYYY HH:MM:SS" to "YYYY-MM-DD"
+      if (profile.birthday) {
+        const date = new Date(profile.birthday)
+        const birthdayFormatted = date.toISOString().split('T')[0]
+        setBirthday(birthdayFormatted)
+      } else {
+        setBirthday('')
+      }
+      setProfileError('')
+    } catch (error) {
+      console.error('Failed to load profile:', error)
+      setProfileError('Failed to load profile')
+    } finally {
+      setLoadingProfile(false)
+    }
+  }
 
   const loadPrivacySettings = async () => {
     try {
@@ -112,6 +138,15 @@ function ProfilePage() {
 
       {/* Profile Form Section */}
       <section className="py-16 px-6 bg-bg">
+        {loadingProfile ? (
+          <div className="max-w-4xl mx-auto text-center text-text">
+            <p>Loading your profile...</p>
+          </div>
+        ) : profileError ? (
+          <div className="max-w-4xl mx-auto text-center text-red-500">
+            <p>{profileError}</p>
+          </div>
+        ) : (
         <form onSubmit={handleSave} className="max-w-4xl mx-auto">
           {/* Name Field */}
           <div className="mb-6">
@@ -195,6 +230,7 @@ function ProfilePage() {
             Save
           </button>
         </form>
+        )}
       </section>
 
       {/* Privacy Settings Section */}

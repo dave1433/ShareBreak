@@ -43,6 +43,7 @@ function Friends() {
       const result = await apiGet<SearchResultDto>(
         `friends/search?email=${encodeURIComponent(searchEmail)}`
       )
+      console.log('Search result:', result)
       setSearchResult(result)
     } catch (err) {
       setSearchError('User not found')
@@ -184,12 +185,15 @@ function Friends() {
             <div className="space-y-2">
               {friends.map((f) => (
                 <div key={f.UserId} className="p-3 bg-border rounded-2xl flex justify-between items-center">
-                  <p className="font-semibold text-text">
-                    {f.FirstName} {f.IsBestFriend && '⭐'}
-                  </p>
+                  <div>
+                    <p className="font-semibold text-text">
+                      {f.FirstName} {f.IsBestFriend && '⭐'}
+                    </p>
+                    <p className="text-sm text-text opacity-70">{f.Email}</p>
+                  </div>
                   <button
                     onClick={() => handleRemove(f.UserId)}
-                    className="text-text opacity-70 text-sm"
+                    className="text-text opacity-70 text-sm hover:text-red-500"
                   >
                     Remove
                   </button>

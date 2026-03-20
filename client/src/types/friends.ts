@@ -16,6 +16,7 @@ export interface FriendRequestDto {
 export interface FriendDto {
   UserId: string
   FirstName: string
+  Email: string
   IsBestFriend: boolean
   IsOnline?: boolean
   ProfileImageUrl?: string

@@ -619,6 +619,31 @@
         }
       }
     },
+    "/api/Login/profile": {
+      "get": {
+        "tags": [
+          "Login"
+        ],
+        "operationId": "Login_GetProfile",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/ProfileSettings/my-settings": {
       "get": {
         "tags": [
@@ -915,6 +940,9 @@
           "firstName": {
             "type": "string"
           },
+          "email": {
+            "type": "string"
+          },
           "isBestFriend": {
             "type": "boolean"
           },
@@ -1018,6 +1046,21 @@
           "birthday": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "UserProfileDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string"
           }
         }
       },

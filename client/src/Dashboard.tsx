@@ -26,7 +26,7 @@ function Dashboard() {
 
   const handleLogout = () => {
     clearAuthData()
-    navigate('/')
+    navigate('/login', { replace: true })
   }
 
   // Load pending requests on mount

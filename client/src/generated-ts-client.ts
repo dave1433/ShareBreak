@@ -779,6 +779,39 @@ export class LoginClient {
         }
         return Promise.resolve<LoginResponseDto>(null as any);
     }
+
+    getProfile(): Promise<UserProfileDto> {
+        let url_ = this.baseUrl + "/api/Login/profile";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetProfile(_response);
+        });
+    }
+
+    protected processGetProfile(response: Response): Promise<UserProfileDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserProfileDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserProfileDto>(null as any);
+    }
 }
 
 export class ProfileSettingsClient {
@@ -1109,6 +1142,7 @@ export interface ActivateChallengeRequestDto {
 export interface FriendDto {
     userId?: string;
     firstName?: string;
+    email?: string;
     isBestFriend?: boolean;
     isOnline?: boolean | undefined;
     profileImageUrl?: string | undefined;
@@ -1146,6 +1180,12 @@ export interface RegisterRequestDto {
     email?: string;
     password?: string;
     birthday?: string | undefined;
+}
+
+export interface UserProfileDto {
+    name?: string;
+    email?: string;
+    birthday?: string;
 }
 
 export interface ProfileSettingsResponse {
