@@ -42,7 +42,7 @@ function ProfilePage() {
 
       {/* Hero Section - Simplified */}
       <section className="py-16 px-24">
-        <div className="flex items-center justify-between gap-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
           {/* Left Side - Logo (50%) */}
           <div className="w-1/2 flex justify-center">
             <img 
@@ -55,7 +55,7 @@ function ProfilePage() {
           {/* Right Side - Profile Info Card (50%) */}
           <div className="w-1/2">
             <div className="bg-header rounded-3xl p-12 shadow-lg">
-              <h1 className="text-5xl font-heading font-bold text-white mb-6">
+              <h1 className="text-3xl lg:text-6xl font-heading font-bold text-white mb-6">
                 Re:set
               </h1>
               <p className="text-white text-2xl">
