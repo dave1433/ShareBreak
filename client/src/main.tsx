@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import './index.css'
 import App from './App.tsx'
+import Badges from './Badges.tsx'
 import Login from './Login.tsx'
 import Friends from './Friends.tsx'
 import Dashboard from './Dashboard.tsx'
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/Badges" element={<Badges />}/>
           <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
           <Route path="/friends" element={<ProtectedRoute element={<Friends />} />} />
           <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />

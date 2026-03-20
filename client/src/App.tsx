@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import heroImg from './assets/hero-img.jpg'
 import bigLogo from './assets/Logo-big.png'
+import crab from './assets/crab.png'
+import jellyfish from './assets/jellyfish.png'
+import shark from './assets/shark.png'
+import whale from './assets/whale.png'
+import octopus from './assets/octopus.png'
 import { Link } from 'react-router-dom'
 import { getToken } from './utils/auth'
 import { apiGet } from './utils/api'
@@ -107,11 +112,21 @@ function App() {
           Unlock fun rewards as you build streaks and try new ways to connect.
         </p>
         <div className="flex justify-between items-center gap-8 pt-10">
-          <div className="w-24 h-24 rounded-full bg-bg"></div>
-          <div className="w-24 h-24 rounded-full bg-bg"></div>
-          <div className="w-24 h-24 rounded-full bg-bg"></div>
-          <div className="w-24 h-24 rounded-full bg-bg"></div>
-          <div className="w-24 h-24 rounded-full bg-bg"></div>
+          <div className="w-24 h-24 rounded-full bg-bg overflow-hidden flex items-center justify-center">
+            <img src={crab} alt="Team Player" className="w-full h-full object-cover" />
+          </div>
+          <div className="w-24 h-24 rounded-full bg-bg overflow-hidden flex items-center justify-center">
+            <img src={jellyfish} alt="Social Butterfly" className="w-full h-full object-cover" />
+          </div>
+          <div className="w-24 h-24 rounded-full bg-bg overflow-hidden flex items-center justify-center">
+            <img src={shark} alt="Streak Master" className="w-full h-full object-cover" />
+          </div>
+          <div className="w-24 h-24 rounded-full bg-bg overflow-hidden flex items-center justify-center">
+            <img src={whale} alt="Wellness Guru" className="w-full h-full object-cover" />
+          </div>
+          <div className="w-24 h-24 rounded-full bg-bg overflow-hidden flex items-center justify-center">
+            <img src={octopus} alt="Multitasker" className="w-full h-full object-cover" />
+          </div>
         </div>
       </div>
     </section>
