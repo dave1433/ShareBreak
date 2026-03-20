@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { apiGet, apiPost, apiPut, apiDelete } from './utils/api'
 import type { SearchResultDto, FriendRequestDto, FriendDto } from './types/friends'
 
@@ -43,7 +44,6 @@ function Friends() {
       const result = await apiGet<SearchResultDto>(
         `friends/search?email=${encodeURIComponent(searchEmail)}`
       )
-      console.log('Search result:', result)
       setSearchResult(result)
     } catch (err) {
       setSearchError('User not found')
@@ -57,7 +57,7 @@ function Friends() {
     try {
       await apiPost(`friends/request/${userId}`, {})
       if (searchResult) {
-        setSearchResult({ ...searchResult, RelationshipStatus: 'pending_sent' })
+        setSearchResult({ ...searchResult, relationshipStatus: 'pending_sent' })
       }
     } catch (err) {
       setSearchError('Failed to send request')
@@ -67,7 +67,7 @@ function Friends() {
   const handleAccept = async (requestId: string) => {
     try {
       await apiPut(`friends/accept/${requestId}`, {})
-      setPendingRequests(pendingRequests.filter((r) => r.RequestId !== requestId))
+      setPendingRequests(pendingRequests.filter((r) => r.requestId !== requestId))
       await loadData()
     } catch (err) {
       setError('Failed to accept')
@@ -77,7 +77,7 @@ function Friends() {
   const handleReject = async (requestId: string) => {
     try {
       await apiPut(`friends/reject/${requestId}`, {})
-      setPendingRequests(pendingRequests.filter((r) => r.RequestId !== requestId))
+      setPendingRequests(pendingRequests.filter((r) => r.requestId !== requestId))
     } catch (err) {
       setError('Failed to reject')
     }
@@ -86,7 +86,7 @@ function Friends() {
   const handleRemove = async (friendId: string) => {
     try {
       await apiDelete(`friends/${friendId}`)
-      setFriends(friends.filter((f) => f.UserId !== friendId))
+      setFriends(friends.filter((f) => f.userId !== friendId))
     } catch (err) {
       setError('Failed to remove')
     }
@@ -99,6 +99,13 @@ function Friends() {
   return (
     <div className="min-h-screen bg-bg p-4">
       <div className="max-w-2xl mx-auto">
+        {/* Back Button */}
+        <Link to="/dashboard">
+          <button className="mb-6 bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105">
+            ← Back
+          </button>
+        </Link>
+
         {/* Search */}
         <div className="bg-bg rounded-3xl p-8 shadow-lg mb-8">
           <h2 className="text-clamp-h2 font-heading font-bold text-text mb-6">Search Friends</h2>
@@ -123,21 +130,21 @@ function Friends() {
           {searchResult && (
             <div className="mt-6 p-4 bg-border rounded-2xl flex items-center justify-between">
               <div>
-                <p className="font-semibold text-text">{searchResult.Name}</p>
-                <p className="text-sm text-text opacity-70">{searchResult.Email}</p>
+                <p className="font-semibold text-text">{searchResult.name}</p>
+                <p className="text-sm text-text opacity-70">{searchResult.email}</p>
               </div>
               <button
-                onClick={() => handleAddFriend(searchResult.UserId)}
-                disabled={searchResult.RelationshipStatus !== 'none'}
+                onClick={() => handleAddFriend(searchResult.userId)}
+                disabled={searchResult.relationshipStatus !== 'none'}
                 className={`px-4 py-2 rounded-lg font-semibold ${
-                  searchResult.RelationshipStatus === 'none'
+                  searchResult.relationshipStatus === 'none'
                     ? 'bg-purple text-white'
                     : 'bg-border text-text opacity-50'
                 }`}
               >
-                {searchResult.RelationshipStatus === 'none'
+                {searchResult.relationshipStatus === 'none'
                   ? 'Add Friend'
-                  : searchResult.RelationshipStatus === 'pending_sent'
+                  : searchResult.relationshipStatus === 'pending_sent'
                     ? 'Request Sent'
                     : 'Already Friends'}
               </button>
@@ -152,20 +159,20 @@ function Friends() {
               Requests ({pendingRequests.length})
             </h2>
             {pendingRequests.map((req) => (
-              <div key={req.RequestId} className="p-4 bg-border rounded-2xl mb-2 flex justify-between">
+              <div key={req.requestId} className="p-4 bg-border rounded-2xl mb-2 flex justify-between">
                 <div>
-                  <p className="font-semibold text-text">{req.SenderName}</p>
-                  <p className="text-sm text-text opacity-70">{req.SenderEmail}</p>
+                  <p className="font-semibold text-text">{req.senderName}</p>
+                  <p className="text-sm text-text opacity-70">{req.senderEmail}</p>
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleAccept(req.RequestId)}
+                    onClick={() => handleAccept(req.requestId)}
                     className="bg-purple text-white px-3 py-1 rounded-lg text-sm"
                   >
                     Accept
                   </button>
                   <button
-                    onClick={() => handleReject(req.RequestId)}
+                    onClick={() => handleReject(req.requestId)}
                     className="bg-border text-text px-3 py-1 rounded-lg text-sm"
                   >
                     Reject
@@ -184,15 +191,15 @@ function Friends() {
           ) : (
             <div className="space-y-2">
               {friends.map((f) => (
-                <div key={f.UserId} className="p-3 bg-border rounded-2xl flex justify-between items-center">
+                <div key={f.userId} className="p-3 bg-border rounded-2xl flex justify-between items-center">
                   <div>
                     <p className="font-semibold text-text">
-                      {f.FirstName} {f.IsBestFriend && '⭐'}
+                      {f.firstName} {f.isBestFriend && '⭐'}
                     </p>
-                    <p className="text-sm text-text opacity-70">{f.Email}</p>
+                    <p className="text-sm text-text opacity-70">{f.email}</p>
                   </div>
                   <button
-                    onClick={() => handleRemove(f.UserId)}
+                    onClick={() => handleRemove(f.userId)}
                     className="text-text opacity-70 text-sm hover:text-red-500"
                   >
                     Remove

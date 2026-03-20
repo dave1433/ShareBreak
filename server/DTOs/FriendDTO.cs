@@ -7,6 +7,7 @@ public class FriendDto
 {
     public Guid UserId { get; set; }
     public string FirstName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
     public bool IsBestFriend { get; set; }
     public bool? IsOnline { get; set; }
     public string? ProfileImageUrl { get; set; }

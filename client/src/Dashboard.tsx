@@ -103,6 +103,11 @@ function Dashboard() {
               )}
             </button>
           </Link>
+          <Link to="/profile">
+            <button className="bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105">
+              Profile
+            </button>
+          </Link>
           <button
             onClick={handleLogout}
             className="bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105"

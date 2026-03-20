@@ -142,17 +142,15 @@ public class FriendService
     public async Task<List<FriendDto>> GetFriendsAsync(Guid userId, PrivacyService privacy)
     {
         var friends = await _ctx.Friends
-            .Where(f => (f.UserId == userId || f.FriendId == userId) && f.Status == FriendStatus.Accepted)
+            .Where(f => f.UserId == userId && f.Status == FriendStatus.Accepted)
             .Include(f => f.User)
             .ToListAsync();
 
         var result = new List<FriendDto>();
         foreach (var friendship in friends)
         {
-            // Get the friend object - if current user is UserId, friend is FriendId User, otherwise it's UserId User
-            var friend = friendship.UserId == userId ?
-                await _ctx.Users.FindAsync(friendship.FriendId) :
-                friendship.User;
+            // Get the friend object (FriendId is always the friend when UserId is current user)
+            var friend = await _ctx.Users.FindAsync(friendship.FriendId);
 
             if (friend == null) continue;
 
