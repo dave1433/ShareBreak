@@ -84,6 +84,10 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service) : Co
     public async Task<IActionResult> ActivateChallenge([FromBody] ActivateChallengeRequestDto request)
     {
         ChallengeService.CheckNullUserId(request.UserId.ToString());
+        if (await service.CheckIfUserChallengeAlreadyExists(request.UserId, request.ChallengeId))
+        {
+            return Ok("User challenge has been updated as not complete");
+        }
         var challenge = await ctx.Challenges.FirstOrDefaultAsync(c => c.Id == request.ChallengeId && c.IsActive);
         var userChallenge = new UserChallenge
         {
