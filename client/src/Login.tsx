@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom' // heeeeeelp
+import { Link, useNavigate } from 'react-router-dom'
 import loginLogo from './assets/logo-login.png'
 
 function Login() {
+  const navigate = useNavigate()
   const [isRegistering, setIsRegistering] = useState(false)
   const [loading, setLoading] = useState(false)
   const [authError, setAuthError] = useState('')
@@ -38,6 +39,8 @@ function Login() {
         setIsLoggedIn(true)
         setCurrentUser({ email })
         setLoading(false)
+        // Redirect to dashboard
+        navigate('/dashboard')
       }, 1000)
     } catch (error) {
       setAuthError('Login failed. Please try again.')
@@ -59,6 +62,8 @@ function Login() {
         setIsLoggedIn(true)
         setCurrentUser({ email: regEmail })
         setLoading(false)
+        // Redirect to dashboard
+        navigate('/dashboard')
       }, 1000)
     } catch (error) {
       setAuthError('Registration failed. Please try again.')
@@ -71,7 +76,6 @@ function Login() {
       {/* Login/Register Card */}
       <div className="relative z-10 bg-bg rounded-3xl p-8 w-full max-w-md shadow-lg">
         {/* Back to Home Link */}
-        {/* heeeeeelp*/}
         <Link 
           to="/" 
           className="block w-fit mb-6 text-black no-underline hover:text-purple transition-colors duration-300"

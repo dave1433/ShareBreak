@@ -67,6 +67,7 @@ builder.Services.AddScoped<DataSeeder>();
 builder.Services.AddScoped<ProfileSettingsService>();
 builder.Services.AddScoped<PrivacyService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<ChallengeService>();
 
 // Add controllers
 builder.Services.AddControllers();
@@ -80,6 +81,8 @@ using (var scope = app.Services.CreateScope())
 
 app.UseOpenApi();
 app.UseSwaggerUi();
+
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
