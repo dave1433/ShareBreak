@@ -1,6 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import loginLogo from './assets/logo-login.png'
+import { LoginClient, type LoginRequestDto } from './generated-ts-client'
+import { extractUserIdFromToken } from './utils/auth'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5255'
 
 function Login() {
   const navigate = useNavigate()
@@ -9,6 +13,7 @@ function Login() {
   const [authError, setAuthError] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [currentUser, setCurrentUser] = useState<{ email: string } | null>(null)
+  const loginClient = useMemo(() => new LoginClient(API_BASE_URL), [])
 
   // Login state
   const [email, setEmail] = useState('')
@@ -25,25 +30,36 @@ function Login() {
     setAuthError('')
   }
 
+  const persistAuthData = (token: string) => {
+    localStorage.setItem('token', token)
+    sessionStorage.setItem('token', token)
+    const derivedUserId = extractUserIdFromToken(token)
+    if (derivedUserId) {
+      localStorage.setItem('userId', derivedUserId)
+      sessionStorage.setItem('userId', derivedUserId)
+    }
+  }
+
   const loginUser = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setAuthError('')
-    
+
     try {
-      // Add your login logic here
-      console.log('Login:', { email, password })
-      
-      // Simulated success
-      setTimeout(() => {
-        setIsLoggedIn(true)
-        setCurrentUser({ email })
-        setLoading(false)
-        // Redirect to dashboard
-        navigate('/dashboard')
-      }, 1000)
+      const payload: LoginRequestDto = { email, password }
+      const response = await loginClient.login(payload)
+      if (!response?.token) {
+        throw new Error('Login succeeded but no access token was returned.')
+      }
+
+      persistAuthData(response.token)
+      setIsLoggedIn(true)
+      setCurrentUser({ email: response.email ?? email })
+      navigate('/dashboard')
     } catch (error) {
-      setAuthError('Login failed. Please try again.')
+      const message = error instanceof Error ? error.message : 'Login failed. Please try again.'
+      setAuthError(message)
+    } finally {
       setLoading(false)
     }
   }

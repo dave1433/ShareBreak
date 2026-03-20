@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom'
 import dashboardImg from './assets/dasboard-img.jpg'
 import bigLogo from './assets/Logo-big.png'
-import ActiveChallenges from './components/ActiveChallenges'
+import ActiveChallenges, { type ActiveChallengeCard } from './components/ActiveChallenges'
 import LatestChallenges from './components/LatestChallenges'
 import Leaderboard from './components/Leaderboard'
+import { useCallback, useEffect, useState } from 'react'
+import { getAllActiveChallenges, type ChallengeDto } from '../Api/ChallangesApi'
+import { getCurrentUserId } from './utils/auth'
 
 function Dashboard() {
   const handleLogout = () => {
@@ -14,32 +17,64 @@ function Dashboard() {
   }
 
   // Sample data for active challenges
-  const activeChallenges = [
-    { title: "Walk & Talk", progress: "3/5 walks this week", timeLeft: "ends in 2 days" },
-    { title: "Coffee Break Social", progress: "2/3 coffee breaks", timeLeft: "ends in 4 days" },
-    { title: "Lunch Away", progress: "4/5 lunches away", timeLeft: "ends in 1 day" },
-    { title: "Team Game Night", progress: "1/2 game sessions", timeLeft: "ends in 5 days" },
-    { title: "Morning Stretch", progress: "6/7 stretches", timeLeft: "ends in 3 days" },
-    { title: "Desk-Free Hour", progress: "2/5 hours tracked", timeLeft: "ends in 6 days" }
-  ]
+  const [activeChallenges, setActiveChallenges] = useState<ActiveChallengeCard[]>([])
 
-  // Sample data for latest activities
-  const latestActivities = [
-    "Mia started \"5K Steps Before Code\" – 2 hours ago",
-    "Jake completed \"Coffee Break Social\" – 5 hours ago",
-    "Emma joined \"Team Lunch Challenge\" – 1 day ago",
-    "Alex earned \"Social Butterfly\" badge – 1 day ago"
-  ]
+  const [latestActivities, setLatestActivities] = useState<string[]>([])
 
-  // Sample data for leaderboard
-  const leaderboard = [
-    { rank: 1, name: "Sarah", points: 450 },
-    { rank: 2, name: "Mike", points: 420 },
-    { rank: 3, name: "Emma", points: 385 },
-    { rank: 4, name: "Jake", points: 360 },
-    { rank: 5, name: "Mia", points: 340 },
-    { rank: 6, name: "Alex", points: 315 }
-  ]
+  const [leaderboard] = useState<
+    Array<{ rank: number; name: string; points: number }>
+  >([])
+
+  const refreshActiveChallenges = useCallback(async () => {
+    try {
+      const userId = getCurrentUserId()
+      if (!userId) {
+        console.warn('No userId available. Skipping active challenge fetch.')
+        setActiveChallenges([])
+        return
+      }
+
+      const active = await getAllActiveChallenges(userId)
+      const mappedActive = (active ?? [])
+        .map((challenge: ChallengeDto) => ({
+          id: challenge.id ?? '',
+          title: challenge.title ?? 'Untitled challenge',
+          progress: challenge.isActive ? 'In progress' : 'Not started',
+          timeLeft: challenge.endDate
+            ? `Ends ${new Date(challenge.endDate).toLocaleDateString()}`
+            : 'No end date',
+          isCompleted: (challenge as { isCompleted?: boolean }).isCompleted ?? false
+        }))
+        .filter((challenge) => !challenge.isCompleted)
+
+      setActiveChallenges(mappedActive)
+    } catch (error) {
+      console.error('Dashboard realtime fetch error:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (!isMounted) return
+
+    refreshActiveChallenges()
+    const timer = window.setInterval(refreshActiveChallenges, 15000)
+
+    return () => {
+      isMounted = false
+      window.clearInterval(timer)
+    }
+  }, [refreshActiveChallenges])
+
+  const handleChallengeFinished = useCallback(
+    (challenge: ActiveChallengeCard) => {
+      const timestamp = new Date().toLocaleString()
+      setLatestActivities((prev) => [`${challenge.title} completed ${timestamp}`, ...prev].slice(0, 6))
+      refreshActiveChallenges()
+    },
+    [refreshActiveChallenges]
+  )
 
   return (
     <div className="min-h-screen bg-bg font-sans text-center">
@@ -101,7 +136,11 @@ function Dashboard() {
       </section>
 
       {/* Components */}
-      <ActiveChallenges challenges={activeChallenges} />
+      <ActiveChallenges
+        challenges={activeChallenges}
+        onChallengeActivated={refreshActiveChallenges}
+        onChallengeFinished={handleChallengeFinished}
+      />
       <LatestChallenges activities={latestActivities} />
       <Leaderboard entries={leaderboard} />
 
