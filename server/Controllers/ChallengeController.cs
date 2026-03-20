@@ -49,7 +49,7 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service, Frie
         ChallengeService.CheckNullUserId(userId);
 
         var userChallenges = await ctx.UserChallenges
-            .Where(uc => uc.UserId == Guid.Parse(userId) && uc.TimesCompleted == 0)
+            .Where(uc => uc.UserId == Guid.Parse(userId) && uc.IsCompleted == false)
             .Include(uc => uc.Challenge)
             .ToHashSetAsync();
         return service.ConvertToChallengeDto(userChallenges);
@@ -97,6 +97,10 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service, Frie
     public async Task<IActionResult> ActivateChallenge([FromBody] ActivateChallengeRequestDto request)
     {
         ChallengeService.CheckNullUserId(request.UserId.ToString());
+        if (await service.CheckIfUserChallengeAlreadyExists(request.UserId, request.ChallengeId))
+        {
+            return Ok("User challenge has been updated as not complete");
+        }
         var challenge = await ctx.Challenges.FirstOrDefaultAsync(c => c.Id == request.ChallengeId && c.IsActive);
         var userChallenge = new UserChallenge
         {

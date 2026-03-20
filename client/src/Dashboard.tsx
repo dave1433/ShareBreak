@@ -1,25 +1,89 @@
-import { useState, useEffect } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import dashboardImg from './assets/dasboard-img.jpg'
 import bigLogo from './assets/Logo-big.png'
-import { clearToken } from './utils/auth'
+import ActiveChallenges, { type ActiveChallengeCard } from './components/ActiveChallenges'
+import LatestChallenges from './components/LatestChallenges'
+import Leaderboard from './components/Leaderboard'
+import { getAllPendingChallenges, type ChallengeDto } from '../Api/ChallangesApi'
+import { getCurrentUserId, clearAuthData } from './utils/auth'
 import { apiGet } from './utils/api'
 import type { FriendRequestDto } from './types/friends'
 
 function Dashboard() {
   const navigate = useNavigate()
   const [pendingCount, setPendingCount] = useState(0)
+  const [activeChallenges, setActiveChallenges] = useState<ActiveChallengeCard[]>([])
+  const [latestActivities, setLatestActivities] = useState<string[]>([])
+  const [leaderboard] = useState<Array<{ rank: number; name: string; points: number }>>([])
 
-  useEffect(() => {
+  // Load friend requests
+  const loadPendingRequests = useCallback(() => {
     apiGet<FriendRequestDto[]>('friends/requests')
       .then((reqs) => setPendingCount(reqs.length))
       .catch(() => setPendingCount(0))
   }, [])
 
   const handleLogout = () => {
-    clearToken()
+    clearAuthData()
     navigate('/')
   }
+
+  // Load pending requests on mount
+  useEffect(() => {
+    loadPendingRequests()
+  }, [loadPendingRequests])
+
+  const refreshActiveChallenges = useCallback(async () => {
+    try {
+      const userId = getCurrentUserId()
+      if (!userId) {
+        console.warn('No userId available. Skipping active challenge fetch.')
+        setActiveChallenges([])
+        return
+      }
+
+      const active = await getAllPendingChallenges(userId)
+      const mappedActive = (active ?? [])
+        .map((challenge: ChallengeDto) => ({
+          id: challenge.id ?? '',
+          title: challenge.title ?? 'Untitled challenge',
+          progress: challenge.isActive ? 'In progress' : 'Not started',
+          timeLeft: challenge.endDate
+            ? `Ends ${new Date(challenge.endDate).toLocaleDateString()}`
+            : 'No end date',
+          isCompleted: (challenge as { isCompleted?: boolean }).isCompleted ?? false
+        }))
+        .filter((challenge) => !challenge.isCompleted)
+
+      setActiveChallenges(mappedActive)
+    } catch (error) {
+      console.error('Dashboard realtime fetch error:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (!isMounted) return
+
+    refreshActiveChallenges()
+    const timer = window.setInterval(refreshActiveChallenges, 15000)
+
+    return () => {
+      isMounted = false
+      window.clearInterval(timer)
+    }
+  }, [refreshActiveChallenges])
+
+  const handleChallengeFinished = useCallback(
+    (challenge: ActiveChallengeCard) => {
+      const timestamp = new Date().toLocaleString()
+      setLatestActivities((prev) => [`${challenge.title} completed ${timestamp}`, ...prev].slice(0, 6))
+      refreshActiveChallenges()
+    },
+    [refreshActiveChallenges]
+  )
 
   return (
     <div className="min-h-screen bg-bg font-sans text-center">
@@ -73,8 +137,33 @@ function Dashboard() {
         />
       </div>
 
-      {/* Dashboard Content */}
-      
+      {/* Dashboard Navigation Section */}
+      <section className="bg-purple py-12 px-6">
+        <div className="max-w-6xl mx-auto flex justify-center items-center gap-6 flex-wrap">
+          <Link to="/profile">
+            <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
+              Profile Page
+            </button>
+          </Link>
+          
+          <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
+            Your Badges
+          </button>
+          
+          <button className="bg-border font-bold px-8 py-3 rounded-lg text-text transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1">
+            Competition Page
+          </button>
+        </div>
+      </section>
+
+      {/* Components */}
+      <ActiveChallenges
+        challenges={activeChallenges}
+        onChallengeActivated={refreshActiveChallenges}
+        onChallengeFinished={handleChallengeFinished}
+      />
+      <LatestChallenges activities={latestActivities} />
+      <Leaderboard entries={leaderboard} />
 
       {/* Footer */}
       <footer className="bg-footer py-12 text-center">
