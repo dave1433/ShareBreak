@@ -80,7 +80,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseOpenApi();
 app.UseSwaggerUi();
-
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
