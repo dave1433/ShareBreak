@@ -2,10 +2,17 @@
 
 public class User
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
     public string Birthday { get; set; }
     public bool IsDeleted { get; set; }
+    public int TotalPoints { get; set; } = 0;
+    public DateTime? LastSeen { get; set; }
+
+    // Navigation properties
+    public List<Friend> Friends { get; set; } = new();
+    public ProfileBadge? ProfileBadge { get; set; }
+    public List<CategoryBadge> CategoryBadges { get; set; } = new();
 }

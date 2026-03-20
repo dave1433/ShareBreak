@@ -1,0 +1,1269 @@
+{
+  "x-generator": "NSwag v14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ShareBreak API",
+    "description": "Social app for meeting people outdoors and building connections.",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Badges/profile-tier/{points}": {
+      "get": {
+        "tags": [
+          "Badges"
+        ],
+        "operationId": "Badges_GetProfileBadgeTier",
+        "parameters": [
+          {
+            "name": "points",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Badges/category-tier/{category}/{points}": {
+      "get": {
+        "tags": [
+          "Badges"
+        ],
+        "operationId": "Badges_GetCategoryBadgeTier",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "points",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Badges/profile-thresholds": {
+      "get": {
+        "tags": [
+          "Badges"
+        ],
+        "operationId": "Badges_GetProfileBadgeThresholds",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Badges/category-thresholds": {
+      "get": {
+        "tags": [
+          "Badges"
+        ],
+        "operationId": "Badges_GetCategoryBadgeThresholds",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Challenge/GetAllPossibleChallenges": {
+      "get": {
+        "tags": [
+          "Challenge"
+        ],
+        "operationId": "Challenge_GetAllPossibleChallenges",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChallengeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Challenge/GetAllActiveChallenges": {
+      "get": {
+        "tags": [
+          "Challenge"
+        ],
+        "operationId": "Challenge_GetAllActiveChallenges",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChallengeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Challenge/GetAllCompletedChallenges": {
+      "get": {
+        "tags": [
+          "Challenge"
+        ],
+        "operationId": "Challenge_GetAllCompletedChallenges",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChallengeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Challenge/GetAllPendingChallenges": {
+      "get": {
+        "tags": [
+          "Challenge"
+        ],
+        "operationId": "Challenge_GetAllPendingChallenges",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChallengeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Challenge/FinishChallenge": {
+      "post": {
+        "tags": [
+          "Challenge"
+        ],
+        "operationId": "Challenge_FinishChallenge",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinishChallengeRequestDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Challenge/ActivateChallenge": {
+      "post": {
+        "tags": [
+          "Challenge"
+        ],
+        "operationId": "Challenge_ActivateChallenge",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivateChallengeRequestDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Friends": {
+      "get": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_GetFriends",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FriendDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/requests": {
+      "get": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_GetPendingRequests",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FriendRequestDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/search": {
+      "get": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_SearchUser",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/request/{targetId}": {
+      "post": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_SendRequest",
+        "parameters": [
+          {
+            "name": "targetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/accept/{requestId}": {
+      "put": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_AcceptRequest",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/reject/{requestId}": {
+      "put": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_RejectRequest",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/{friendId}": {
+      "delete": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_RemoveFriend",
+        "parameters": [
+          {
+            "name": "friendId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Login/Login": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "operationId": "Login_Login",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequestDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Login/Register": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "operationId": "Login_Register",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequestDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Login/profile": {
+      "get": {
+        "tags": [
+          "Login"
+        ],
+        "operationId": "Login_GetProfile",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/ProfileSettings/my-settings": {
+      "get": {
+        "tags": [
+          "ProfileSettings"
+        ],
+        "operationId": "ProfileSettings_GetMySettings",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileSettingsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ProfileSettings/privacy": {
+      "get": {
+        "tags": [
+          "ProfileSettings"
+        ],
+        "operationId": "ProfileSettings_GetPrivacySettings",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivacySettingsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ProfileSettings"
+        ],
+        "operationId": "ProfileSettings_UpdatePrivacySettings",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePrivacySettingsRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivacySettingsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ProfileSettings/notifications": {
+      "get": {
+        "tags": [
+          "ProfileSettings"
+        ],
+        "operationId": "ProfileSettings_GetNotificationPreferences",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPreferencesResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ProfileSettings"
+        ],
+        "operationId": "ProfileSettings_UpdateNotificationPreferences",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNotificationPreferencesRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPreferencesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ProfileSettings/language": {
+      "get": {
+        "tags": [
+          "ProfileSettings"
+        ],
+        "operationId": "ProfileSettings_GetLanguage",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ProfileSettings"
+        ],
+        "operationId": "ProfileSettings_UpdateLanguage",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLanguageRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ProfileSettings/all": {
+      "put": {
+        "tags": [
+          "ProfileSettings"
+        ],
+        "operationId": "ProfileSettings_UpdateAllSettings",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileSettingsRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileSettingsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChallengeDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isRepeatable": {
+            "type": "boolean"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "timesCompleted": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "FinishChallengeRequestDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "challengeId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "isFinished": {
+            "type": "boolean"
+          },
+          "finishDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "ActivateChallengeRequestDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "challengeId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "FriendDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "isBestFriend": {
+            "type": "boolean"
+          },
+          "isOnline": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "profileImageUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FriendRequestDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "senderId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "senderName": {
+            "type": "string"
+          },
+          "senderEmail": {
+            "type": "string"
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SearchResultDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "relationshipStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expiration": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginRequestDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "RegisterRequestDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UserProfileDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string"
+          }
+        }
+      },
+      "ProfileSettingsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "language": {
+            "type": "string"
+          },
+          "notificationPreferences": {
+            "$ref": "#/components/schemas/NotificationPreferencesResponse"
+          },
+          "privacySettings": {
+            "$ref": "#/components/schemas/PrivacySettingsResponse"
+          }
+        }
+      },
+      "NotificationPreferencesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "notifyFriendRequests": {
+            "type": "boolean"
+          },
+          "notifyChallengeUpdates": {
+            "type": "boolean"
+          },
+          "notifyFriendActivity": {
+            "type": "boolean"
+          },
+          "notifyNewBadges": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PrivacySettingsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bioVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "locationVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "interestsVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "friendListVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "profileImageVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengesCompletedVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "friendCountVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "badgesVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pointsVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onlineStatusVisibility": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UpdatePrivacySettingsRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "bioVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "locationVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "interestsVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "friendListVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "profileImageVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengesCompletedVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "friendCountVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "badgesVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pointsVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onlineStatusVisibility": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UpdateNotificationPreferencesRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "notifyFriendRequests": {
+            "type": "boolean"
+          },
+          "notifyChallengeUpdates": {
+            "type": "boolean"
+          },
+          "notifyFriendActivity": {
+            "type": "boolean"
+          },
+          "notifyNewBadges": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateLanguageRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateProfileSettingsRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "notificationPreferences": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UpdateNotificationPreferencesRequest"
+              }
+            ]
+          },
+          "privacySettings": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UpdatePrivacySettingsRequest"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme.",
+        "name": "Authorization",
+        "in": "header",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
