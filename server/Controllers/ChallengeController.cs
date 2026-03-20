@@ -49,7 +49,7 @@ public class ChallengeController(MyDbContext ctx, ChallengeService service) : Co
         ChallengeService.CheckNullUserId(userId);
 
         var userChallenges = await ctx.UserChallenges
-            .Where(uc => uc.UserId == Guid.Parse(userId) && uc.TimesCompleted == 0)
+            .Where(uc => uc.UserId == Guid.Parse(userId) && uc.IsCompleted == false)
             .Include(uc => uc.Challenge)
             .ToHashSetAsync();
         return service.ConvertToChallengeDto(userChallenges);
