@@ -12,7 +12,7 @@ using server;
 namespace server.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20260319164916_InitialCreate")]
+    [Migration("20260320042845_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -46,15 +46,22 @@ namespace server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("EarnedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Tier")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("CategoryBadges");
                 });
@@ -101,16 +108,30 @@ namespace server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("FriendId")
+                    b.Property<Guid>("FriendId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("InteractionScore")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsBestFriend")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("UserId")
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RequesterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Friends");
                 });
@@ -121,15 +142,19 @@ namespace server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                    b.Property<DateTime>("EarnedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Tier")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("ProfileBadges");
                 });
@@ -151,6 +176,9 @@ namespace server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("LastSeen")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -158,6 +186,9 @@ namespace server.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("TotalPoints")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -187,7 +218,62 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ChallengeId");
+
                     b.ToTable("UserChallenges");
+                });
+
+            modelBuilder.Entity("server.Entities.CategoryBadge", b =>
+                {
+                    b.HasOne("server.Entities.User", "User")
+                        .WithMany("CategoryBadges")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("server.Entities.Friend", b =>
+                {
+                    b.HasOne("server.Entities.User", "User")
+                        .WithMany("Friends")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("server.Entities.ProfileBadge", b =>
+                {
+                    b.HasOne("server.Entities.User", "User")
+                        .WithOne("ProfileBadge")
+                        .HasForeignKey("server.Entities.ProfileBadge", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("server.Entities.UserChallenge", b =>
+                {
+                    b.HasOne("server.Entities.Challenge", "Challenge")
+                        .WithMany()
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Challenge");
+                });
+
+            modelBuilder.Entity("server.Entities.User", b =>
+                {
+                    b.Navigation("CategoryBadges");
+
+                    b.Navigation("Friends");
+
+                    b.Navigation("ProfileBadge");
                 });
 #pragma warning restore 612, 618
         }

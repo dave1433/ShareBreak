@@ -312,6 +312,249 @@
         }
       }
     },
+    "/api/Friends": {
+      "get": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_GetFriends",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FriendDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/requests": {
+      "get": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_GetPendingRequests",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FriendRequestDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/search": {
+      "get": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_SearchUser",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/request/{targetId}": {
+      "post": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_SendRequest",
+        "parameters": [
+          {
+            "name": "targetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/accept/{requestId}": {
+      "put": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_AcceptRequest",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/reject/{requestId}": {
+      "put": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_RejectRequest",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Friends/{friendId}": {
+      "delete": {
+        "tags": [
+          "Friends"
+        ],
+        "operationId": "Friends_RemoveFriend",
+        "parameters": [
+          {
+            "name": "friendId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/Login/Login": {
       "post": {
         "tags": [
@@ -661,6 +904,73 @@
           }
         }
       },
+      "FriendDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "isBestFriend": {
+            "type": "boolean"
+          },
+          "isOnline": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "profileImageUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FriendRequestDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "senderId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "senderName": {
+            "type": "string"
+          },
+          "senderEmail": {
+            "type": "string"
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SearchResultDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "relationshipStatus": {
+            "type": "string"
+          }
+        }
+      },
       "LoginResponseDto": {
         "type": "object",
         "additionalProperties": false,
@@ -795,6 +1105,10 @@
           "pointsVisibility": {
             "type": "integer",
             "format": "int32"
+          },
+          "onlineStatusVisibility": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -835,6 +1149,10 @@
             "format": "int32"
           },
           "pointsVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onlineStatusVisibility": {
             "type": "integer",
             "format": "int32"
           }
