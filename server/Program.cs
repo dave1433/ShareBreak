@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using server.Util;
+using WindMill;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,13 @@ if (string.IsNullOrWhiteSpace(connectionString))
 
 builder.Services.AddDbContext<MyDbContext>(options =>
 	options.UseNpgsql(connectionString));
+builder.Services.AddCors(options => options.AddPolicy("AllowAll", policy =>
+{
+	policy.AllowAnyOrigin()
+		.AllowAnyMethod()
+		.AllowAnyHeader();
+}));
+
 builder.Services.AddOpenApiDocument(document =>
 {
 	document.Title = "ShareBreak API";
@@ -77,5 +85,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+if (builder.Environment.IsDevelopment())
+{
+	app.GenerateApiClientsFromOpenApi("../client/src/generated-ts-client.ts", "./openapi.json").GetAwaiter()
+		.GetResult();
+}
 
 await app.RunAsync();
