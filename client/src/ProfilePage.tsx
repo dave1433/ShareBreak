@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { apiGet, apiPut } from './utils/api'
 import bigLogo from './assets/Logo-big.png'
 import loginLogo from './assets/logo-login.png'
 
@@ -19,10 +20,53 @@ function ProfilePage() {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
+  // Privacy settings state
+  const [onlineStatusVisibility, setOnlineStatusVisibility] = useState('Everyone')
+  const [friendListVisibility, setFriendListVisibility] = useState('Everyone')
+  const [loadingPrivacy, setLoadingPrivacy] = useState(false)
+  const [privacyMessage, setPrivacyMessage] = useState('')
+
+  // Load privacy settings on mount
+  useEffect(() => {
+    loadPrivacySettings()
+  }, [])
+
+  const loadPrivacySettings = async () => {
+    try {
+      const settings = await apiGet('profilesettings/privacy')
+      if (settings) {
+        setOnlineStatusVisibility(settings.onlineStatusVisibility || 'Everyone')
+        setFriendListVisibility(settings.friendListVisibility || 'Everyone')
+      }
+    } catch (error) {
+      console.error('Failed to load privacy settings:', error)
+    }
+  }
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Saving profile:', { name, email, birthday, oldPassword, newPassword, confirmPassword })
     // Add your save logic here
+  }
+
+  const handlePrivacySave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoadingPrivacy(true)
+    setPrivacyMessage('')
+
+    try {
+      await apiPut('profilesettings/privacy', {
+        onlineStatusVisibility,
+        friendListVisibility
+      })
+      setPrivacyMessage('Privacy settings saved successfully!')
+      setTimeout(() => setPrivacyMessage(''), 3000)
+    } catch (error) {
+      setPrivacyMessage('Failed to save privacy settings')
+      console.error('Error saving privacy settings:', error)
+    } finally {
+      setLoadingPrivacy(false)
+    }
   }
 
   return (
@@ -144,12 +188,63 @@ function ProfilePage() {
           </div>
 
           {/* Save Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-fit font-semibold p-4 bg-border text-text border-none rounded-xl cursor-pointer transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1"
           >
             Save
           </button>
+        </form>
+      </section>
+
+      {/* Privacy Settings Section */}
+      <section className="py-16 px-6 bg-accent bg-opacity-20">
+        <form onSubmit={handlePrivacySave} className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-heading font-bold text-text mb-8">Privacy Settings</h2>
+
+          {/* Online Status Visibility */}
+          <div className="mb-6">
+            <label className="block mb-2 font-medium text-text text-left">Who can see your online status?</label>
+            <select
+              value={onlineStatusVisibility}
+              onChange={(e) => setOnlineStatusVisibility(e.target.value)}
+              className="w-full p-4 rounded-xl bg-[#978A74] text-black border-none outline-none focus:ring-2 focus:ring-purple transition-all duration-300"
+            >
+              <option value="Everyone">Everyone</option>
+              <option value="Friends">Friends Only</option>
+              <option value="Nobody">Nobody</option>
+            </select>
+          </div>
+
+          {/* Friend List Visibility */}
+          <div className="mb-8">
+            <label className="block mb-2 font-medium text-text text-left">Who can see your friend list?</label>
+            <select
+              value={friendListVisibility}
+              onChange={(e) => setFriendListVisibility(e.target.value)}
+              className="w-full p-4 rounded-xl bg-[#978A74] text-black border-none outline-none focus:ring-2 focus:ring-purple transition-all duration-300"
+            >
+              <option value="Everyone">Everyone</option>
+              <option value="Friends">Friends Only</option>
+              <option value="Nobody">Nobody</option>
+            </select>
+          </div>
+
+          {/* Privacy Save Button */}
+          <button
+            type="submit"
+            disabled={loadingPrivacy}
+            className="w-fit font-semibold p-4 bg-purple text-white border-none rounded-xl cursor-pointer transition-all duration-300 hover:opacity-90 hover:shadow-lg disabled:opacity-50"
+          >
+            {loadingPrivacy ? 'Saving...' : 'Save Privacy Settings'}
+          </button>
+
+          {/* Privacy Message */}
+          {privacyMessage && (
+            <div className={`mt-4 p-4 rounded-lg ${privacyMessage.includes('successfully') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+              {privacyMessage}
+            </div>
+          )}
         </form>
       </section>
 

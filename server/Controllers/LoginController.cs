@@ -36,11 +36,12 @@ public class LoginController(MyDbContext ctx, IConfiguration config, JwtService 
             throw new ValidationException("E-mail and password are required.");
         }
 
+        var pepper = config["SECRET"]?.Substring(0, 16);
         var userToRegister = new User
         {
             Name = request.Name,
             Email = request.Email,
-            Password = GenerateHashPass.Generate(request.Password),
+            Password = GenerateHashPass.Generate(request.Password, pepper),
             Birthday = validatedBirthday.ToString(CultureInfo.InvariantCulture),
             IsDeleted = false
         };
