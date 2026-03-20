@@ -13,7 +13,7 @@ public class ChallengeService(MyDbContext ctx)
             throw new ArgumentNullException(nameof(userId), "UserId cannot be null.");
         }
     }
-    
+
     public List<ChallengeDto> ConvertToChallengeDto(HashSet<UserChallenge> userChallange)
     {
         var listOfChallanges = new List<ChallengeDto>();
@@ -53,6 +53,21 @@ public class ChallengeService(MyDbContext ctx)
                 EndDate = challenge.EndDate
             });
         }
+
         return listOfChallengeDtos;
+    }
+
+    public async Task<bool> CheckIfUserChallengeAlreadyExists(Guid requestUserId, Guid requestChallengeId)
+    {
+        var userChallenge = await ctx.UserChallenges.FirstOrDefaultAsync(uc =>
+            uc.UserId == requestUserId && uc.ChallengeId == requestChallengeId);
+        if (userChallenge != null)
+        {
+            userChallenge.IsCompleted = false;
+            ctx.UserChallenges.Update(userChallenge);
+            await ctx.SaveChangesAsync();
+            return true;
+        }
+        return false;
     }
 }

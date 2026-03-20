@@ -1,40 +1,110 @@
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
+import {
+  activateChallenge,
+  finishChallenge,
+  getAllPossibleChallenges,
+  type ChallengeDto
+} from '../../Api/ChallangesApi'
+import { getCurrentUserId } from '../utils/auth'
 
-interface Challenge {
+export interface ActiveChallengeCard {
+  id: string;
   title: string;
   progress: string;
   timeLeft: string;
+  isCompleted?: boolean;
+}
+interface PossibleChallenge {
+  id: string
+  title: string
 }
 
 interface ActiveChallengesProps {
-  challenges: Challenge[];
+  challenges: ActiveChallengeCard[];
+  onChallengeActivated?: () => void;
+  onChallengeFinished?: (challenge: ActiveChallengeCard) => void;
 }
 
-function ActiveChallenges({ challenges }: ActiveChallengesProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [challengeName, setChallengeName] = useState('')
-  const [goalCount, setGoalCount] = useState('')
-  const [deadline, setDeadline] = useState('')
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('New Challenge:', { challengeName, goalCount, deadline })
-    // Add your save logic here
-    
-    // Close modal and reset form
-    setIsModalOpen(false)
-    setChallengeName('')
-    setGoalCount('')
-    setDeadline('')
-  }
+function ActiveChallenges({ challenges, onChallengeActivated, onChallengeFinished }: ActiveChallengesProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [possibleChallenges, setPossibleChallenges] = useState<PossibleChallenge[]>([])
+  const [selectedChallengeId, setSelectedChallengeId] = useState('')
+  const [finishingChallenge, setFinishingChallenge] = useState<string | null>(null)
+
 
   const closeModal = () => {
     setIsModalOpen(false)
-    setChallengeName('')
-    setGoalCount('')
-    setDeadline('')
+    setSelectedChallengeId('')
   }
 
+  useEffect(() => {
+    const loadPossibleChallenges = async () => {
+      try {
+        const data = await getAllPossibleChallenges()
+        const normalized: PossibleChallenge[] = (data ?? [])
+          .filter((challenge: ChallengeDto) => Boolean(challenge.id) && Boolean(challenge.title))
+          .map((challenge: ChallengeDto) => ({
+            id: challenge.id as string,
+            title: challenge.title as string
+          }))
+        setPossibleChallenges(normalized)
+      } catch (error) {
+        console.error('Error loading possible challenges:', error)
+      }
+    }
+
+    loadPossibleChallenges()
+  }, [])
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    try {
+      const userId = getCurrentUserId()
+      if (!userId) {
+        console.error('Cannot activate challenge without a userId.')
+        return
+      }
+
+      await activateChallenge({
+        userId,
+        challengeId: selectedChallengeId
+      })
+
+      onChallengeActivated?.()
+
+      closeModal()
+    } catch (error) {
+      console.error('Error activating challenge:', error)
+    }
+  }
+
+  const handleFinishChallenge = async (challenge: ActiveChallengeCard) => {
+    if (!challenge.id) return
+
+    const userId = getCurrentUserId()
+    if (!userId) {
+      console.error('Cannot finish challenge without a userId.')
+      return
+    }
+
+    setFinishingChallenge(challenge.id)
+    try {
+      await finishChallenge({
+        userId,
+        challengeId: challenge.id,
+        isFinished: true,
+        finishDate: new Date().toISOString()
+      })
+
+      onChallengeFinished?.(challenge)
+    } catch (error) {
+      console.error('Error finishing challenge:', error)
+    } finally {
+      setFinishingChallenge(null)
+    }
+  }
   return (
     <section className="py-16 px-6 bg-bg">
       <div className="max-w-6xl mx-auto">
@@ -57,6 +127,15 @@ function ActiveChallenges({ challenges }: ActiveChallengesProps) {
               </p>
               <p className="text-bg text-sm">
                 {challenge.timeLeft}
+              </p>
+              <p>
+                <button
+                  className="backdrop-blur-lg"
+                  onClick={() => handleFinishChallenge(challenge)}
+                  disabled={finishingChallenge === challenge.id}
+                >
+                  {finishingChallenge === challenge.id ? 'Finishing...' : 'Finish challenge'}
+                </button>
               </p>
             </div>
           ))}
@@ -88,52 +167,27 @@ function ActiveChallenges({ challenges }: ActiveChallengesProps) {
             </h2>
 
             <form onSubmit={handleSave}>
-              {/* Challenge Name Field */}
               <div className="mb-6">
                 <label className="block mb-2 font-medium text-black text-left">
-                  Name of Activity
+                  Challenge
                 </label>
-                <input 
-                  type="text" 
-                  value={challengeName}
-                  onChange={(e) => setChallengeName(e.target.value)}
-                  placeholder="e.g., Walk & Talk" 
-                  required 
-                  className="w-full p-4 rounded-xl bg-[#978A74] text-black placeholder-bg border-none outline-none focus:ring-2 focus:ring-purple transition-all duration-300"
-                />
-              </div>
-
-              {/* Goal Count Field */}
-              <div className="mb-6">
-                <label className="block mb-2 font-medium text-black text-left">
-                  Goal (How many times)
-                </label>
-                <input 
-                  type="text" 
-                  value={goalCount}
-                  onChange={(e) => setGoalCount(e.target.value)}
-                  placeholder="e.g., 5 walks this week" 
-                  required 
-                  className="w-full p-4 rounded-xl bg-[#978A74] text-black placeholder-bg border-none outline-none focus:ring-2 focus:ring-purple transition-all duration-300"
-                />
-              </div>
-
-              {/* Deadline Field */}
-              <div className="mb-8">
-                <label className="block mb-2 font-medium text-black text-left">
-                  Deadline
-                </label>
-                <input 
-                  type="date" 
-                  value={deadline}
-                  onChange={(e) => setDeadline(e.target.value)}
-                  required 
+                <select
+                  value={selectedChallengeId}
+                  onChange={(e) => setSelectedChallengeId(e.target.value)}
+                  required
                   className="w-full p-4 rounded-xl bg-[#978A74] text-black border-none outline-none focus:ring-2 focus:ring-purple transition-all duration-300"
-                />
+                >
+                  <option value="">Select a challenge</option>
+                  {possibleChallenges.map((challenge) => (
+                    <option key={challenge.id} value={challenge.id}>
+                      {challenge.title}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Save Button */}
-              <button 
+              <button
                 type="submit"
                 className="w-full font-semibold p-4 bg-border text-text border-none rounded-xl cursor-pointer transition-all duration-300 hover:bg-header hover:text-white hover:shadow-lg hover:-translate-y-1"
               >
