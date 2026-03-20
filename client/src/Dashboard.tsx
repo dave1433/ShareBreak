@@ -5,7 +5,7 @@ import ActiveChallenges, { type ActiveChallengeCard } from './components/ActiveC
 import LatestChallenges from './components/LatestChallenges'
 import Leaderboard from './components/Leaderboard'
 import { useCallback, useEffect, useState } from 'react'
-import { getAllActiveChallenges, type ChallengeDto } from '../Api/ChallangesApi'
+import { getAllPendingChallenges, type ChallengeDto } from '../Api/ChallangesApi'
 import { getCurrentUserId } from './utils/auth'
 
 function Dashboard() {
@@ -34,7 +34,7 @@ function Dashboard() {
         return
       }
 
-      const active = await getAllActiveChallenges(userId)
+      const active = await getAllPendingChallenges(userId)
       const mappedActive = (active ?? [])
         .map((challenge: ChallengeDto) => ({
           id: challenge.id ?? '',

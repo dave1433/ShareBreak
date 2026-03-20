@@ -96,6 +96,11 @@ export async function getAllActiveChallenges(userId: string): Promise<ChallengeD
   return request<ChallengeDto[]>(`/GetAllActiveChallenges${query}`)
 }
 
+export async function getAllPendingChallenges(userId: string): Promise<ChallengeDto[]> {
+  const query = `?userId=${encodeURIComponent(userId)}`
+  return request<ChallengeDto[]>(`/GetAllPendingChallenges${query}`)
+}
+
 export async function activateChallenge(payload: ActivateChallengeRequestDto): Promise<void> {
   await request<unknown>('/ActivateChallenge', {
 	method: 'POST',
@@ -115,6 +120,7 @@ export { ApiError }
 export default {
   getAllPossibleChallenges,
   getAllActiveChallenges,
+  getAllPendingChallenges,
   activateChallenge,
   finishChallenge
 }
