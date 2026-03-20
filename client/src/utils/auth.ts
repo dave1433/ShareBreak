@@ -55,3 +55,13 @@ export function getCurrentUserId(): string | null {
   return getUserIdFromPayload(decodeJwtPayload(token)) ?? import.meta.env.VITE_DEFAULT_USER_ID ?? null
 }
 
+export function clearAuthData() {
+  for (const key of ['token', 'jwt', 'auth_token']) {
+    localStorage.removeItem(key)
+    sessionStorage.removeItem(key)
+  }
+  for (const key of ['userId', 'user_id', 'auth_user_id']) {
+    localStorage.removeItem(key)
+    sessionStorage.removeItem(key)
+  }
+}

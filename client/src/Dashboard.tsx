@@ -6,13 +6,13 @@ import LatestChallenges from './components/LatestChallenges'
 import Leaderboard from './components/Leaderboard'
 import { useCallback, useEffect, useState } from 'react'
 import { getAllPendingChallenges, type ChallengeDto } from '../Api/ChallangesApi'
-import { getCurrentUserId } from './utils/auth'
+import { getCurrentUserId, clearAuthData } from './utils/auth'
 
 function Dashboard() {
   const handleLogout = () => {
-    // Add your logout logic here
+    clearAuthData()
     console.log('Logging out...')
-    // For now, just redirect to home
+
     window.location.href = '/'
   }
 
