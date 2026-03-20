@@ -1,4 +1,4 @@
-# ShareBreak
+# Re:set
 
 ShareBreak is a web app created during **Esbjerg Hackathon (March 2026)** for the **UNPLUG** challenge.
 
@@ -6,7 +6,7 @@ The core idea is simple: help people unplug from constant work/screen pressure a
 
 ## Why This Exists
 
-Modern teams are always connected, but often socially disconnected. ShareBreak focuses on motivating people to:
+Modern teams are always connected, but often socially disconnected. Re:set focuses on motivating people to:
 
 - step away from work regularly,
 - do short offline activities with others,
