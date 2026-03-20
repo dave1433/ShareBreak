@@ -6,6 +6,9 @@ import App from './App.tsx'
 import Login from './Login.tsx'
 import Dashboard from './Dashboard.tsx'
 import ProfilePage from './ProfilePage.tsx'
+import Badges from './Badges.tsx'
+
+<Route path="/badges" element={<Badges />} />
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -15,6 +18,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/badges" element={<Badges />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
