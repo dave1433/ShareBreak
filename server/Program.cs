@@ -88,6 +88,29 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Middleware to update LastSeen on each authenticated request
+app.Use(async (context, next) =>
+{
+	if (context.User.Identity?.IsAuthenticated == true)
+	{
+		var userIdClaim = context.User.FindFirst("sub")?.Value ?? context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+		if (Guid.TryParse(userIdClaim, out var userId))
+		{
+			using (var scope = app.Services.CreateScope())
+			{
+				var dbContext = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+				var user = await dbContext.Users.FindAsync(userId);
+				if (user != null)
+				{
+					user.LastSeen = DateTime.UtcNow;
+					await dbContext.SaveChangesAsync();
+				}
+			}
+		}
+	}
+	await next.Invoke();
+});
+
 app.MapControllers();
 if (builder.Environment.IsDevelopment())
 {

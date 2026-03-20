@@ -26,7 +26,7 @@ function Dashboard() {
 
   const handleLogout = () => {
     clearAuthData()
-    navigate('/')
+    navigate('/login', { replace: true })
   }
 
   // Load pending requests on mount
@@ -89,7 +89,7 @@ function Dashboard() {
     <div className="min-h-screen bg-bg font-sans text-center">
       {/* Header */}
       <header className="bg-header bg-opacity-40 flex justify-between items-center px-10 py-4">
-        <Link to="/">
+        <Link to="/dashboard">
           <img src={bigLogo} alt="Reset Logo" className="h-10 w-auto" />
         </Link>
         <div className="flex gap-4 items-center">

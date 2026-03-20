@@ -1,22 +1,23 @@
 export interface SearchResultDto {
-  UserId: string
-  Name: string
-  Email: string
-  RelationshipStatus: string
+  userId: string
+  name: string
+  email: string
+  relationshipStatus: string
 }
 
 export interface FriendRequestDto {
-  RequestId: string
-  SenderId: string
-  SenderName: string
-  SenderEmail: string
-  RequestedAt: string
+  requestId: string
+  senderId: string
+  senderName: string
+  senderEmail: string
+  requestedAt: string
 }
 
 export interface FriendDto {
-  UserId: string
-  FirstName: string
-  IsBestFriend: boolean
-  IsOnline?: boolean
-  ProfileImageUrl?: string
+  userId: string
+  firstName: string
+  email: string
+  isBestFriend: boolean
+  isOnline?: boolean
+  profileImageUrl?: string
 }

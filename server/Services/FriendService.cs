@@ -25,9 +25,10 @@ public class FriendService
         if (user.Id == requesterId)
             return null; // Can't search for yourself
 
-        // Determine relationship status
+        // Determine relationship status - check both directions
         var friendship = await _ctx.Friends
-            .FirstOrDefaultAsync(f => f.UserId == requesterId && f.FriendId == user.Id);
+            .FirstOrDefaultAsync(f => (f.UserId == requesterId && f.FriendId == user.Id) ||
+                                      (f.UserId == user.Id && f.FriendId == requesterId));
 
         string relationshipStatus = "none";
         if (friendship != null)
@@ -148,17 +149,26 @@ public class FriendService
         var result = new List<FriendDto>();
         foreach (var friendship in friends)
         {
-            var friend = friendship.User;
-            var onlineStatus = friend.LastSeen != null 
-                ? (DateTime.UtcNow - friend.LastSeen.Value).TotalMinutes < 5 
+            // Get the friend object (FriendId is always the friend when UserId is current user)
+            var friend = await _ctx.Users.FindAsync(friendship.FriendId);
+
+            if (friend == null) continue;
+
+            // Calculate online status (5 minute threshold)
+            var isOnline = friend.LastSeen != null
+                ? (DateTime.UtcNow - friend.LastSeen.Value).TotalMinutes < 5
                 : (bool?)null;
 
+            // Note: Online status visibility could be filtered by privacy settings here if needed
+            // For now, always show online status
+            // All friends are always visible regardless of privacy settings
             result.Add(new FriendDto
             {
                 UserId = friend.Id,
                 FirstName = friend.Name.Split(' ').First(),
+                Email = friend.Email,
                 IsBestFriend = friendship.IsBestFriend,
-                IsOnline = onlineStatus,
+                IsOnline = isOnline,
                 ProfileImageUrl = null // TODO: Add when profile images are implemented
             });
         }

@@ -18,6 +18,11 @@ public class MyDbContext(DbContextOptions<MyDbContext> options) : DbContext(opti
     {
         base.OnModelCreating(modelBuilder);
 
+        // Unique email per user
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
         // Configure Friend entity relationships
         modelBuilder.Entity<Friend>()
             .HasOne(f => f.User)

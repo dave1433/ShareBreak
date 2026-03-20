@@ -20,7 +20,7 @@ createRoot(document.getElementById('root')!).render(
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />} />
+          <Route path="/" element={getToken() ? <Navigate to="/dashboard" replace /> : <App />} />
           <Route path="/login" element={<Login />} />
           <Route path="/Badges" element={<Badges />}/>
           <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />

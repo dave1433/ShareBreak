@@ -52,11 +52,11 @@ public class FriendsController(FriendService service, PrivacyService privacy) : 
         try
         {
             await service.SendRequestAsync(userId, targetId);
-            return Ok("Friend request sent");
+            return Ok(new { message = "Friend request sent" });
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
     }
 
@@ -67,11 +67,11 @@ public class FriendsController(FriendService service, PrivacyService privacy) : 
         try
         {
             await service.AcceptRequestAsync(requestId, userId);
-            return Ok("Friend request accepted");
+            return Ok(new { message = "Friend request accepted" });
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
     }
 
@@ -82,11 +82,11 @@ public class FriendsController(FriendService service, PrivacyService privacy) : 
         try
         {
             await service.RejectRequestAsync(requestId, userId);
-            return Ok("Friend request rejected");
+            return Ok(new { message = "Friend request rejected" });
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
     }
 
@@ -95,6 +95,6 @@ public class FriendsController(FriendService service, PrivacyService privacy) : 
     {
         var userId = GetUserId();
         await service.RemoveFriendAsync(userId, friendId);
-        return Ok("Friend removed");
+        return Ok(new { message = "Friend removed" });
     }
 }
