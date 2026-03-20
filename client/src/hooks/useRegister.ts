@@ -1,87 +1,108 @@
-/**
- * Custom hook for registration form logic
- * Separates form state management from UI rendering
- */
+import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { LoginClient, type RegisterRequestDto } from '../generated-ts-client'
+import { extractUserIdFromToken } from '../utils/auth'
 
-import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5255'
 
 interface UseRegisterReturn {
-  username: string;
-  email: string;
-  password: string;
-  birthDate: string;
-  setUsername: (username: string) => void;
-  setEmail: (email: string) => void;
-  setPassword: (password: string) => void;
-  setBirthDate: (date: string) => void;
-  handleRegister: (e: React.FormEvent) => Promise<void>;
-  loading: boolean;
-  error: string | null;
+  username: string
+  email: string
+  password: string
+  birthDate: string
+  setUsername: (username: string) => void
+  setEmail: (email: string) => void
+  setPassword: (password: string) => void
+  setBirthDate: (date: string) => void
+  handleRegister: (e: React.FormEvent) => Promise<void>
+  loading: boolean
+  error: string | null
 }
 
 export const useRegister = (): UseRegisterReturn => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [localError, setLocalError] = useState<string | null>(null);
-  const { register, loading } = useAuth();
+  const navigate = useNavigate()
+  const loginClient = useMemo(() => new LoginClient(API_BASE_URL), [])
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [birthDate, setBirthDate] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  const persistAuthData = (token: string) => {
+    localStorage.setItem('token', token)
+    sessionStorage.setItem('token', token)
+    const derivedUserId = extractUserIdFromToken(token)
+    if (derivedUserId) {
+      localStorage.setItem('userId', derivedUserId)
+      sessionStorage.setItem('userId', derivedUserId)
+    }
+  }
 
   const validateForm = (): boolean => {
     if (!username.trim()) {
-      setLocalError('Username is required');
-      return false;
+      setError('Username is required')
+      return false
     }
     if (!email.trim()) {
-      setLocalError('Email is required');
-      return false;
+      setError('Email is required')
+      return false
     }
     if (!password.trim()) {
-      setLocalError('Password is required');
-      return false;
+      setError('Password is required')
+      return false
     }
     if (!birthDate) {
-      setLocalError('Birth date is required');
-      return false;
+      setError('Birth date is required')
+      return false
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setLocalError('Please enter a valid email address');
-      return false;
+      setError('Please enter a valid email address')
+      return false
     }
 
-    // Password length check
     if (password.length < 6) {
-      setLocalError('Password must be at least 6 characters long');
-      return false;
+      setError('Password must be at least 6 characters long')
+      return false
     }
 
-    return true;
-  };
+    return true
+  }
 
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLocalError(null);
+    e.preventDefault()
+    setError(null)
 
     if (!validateForm()) {
-      return;
+      return
     }
 
+    setLoading(true)
+
     try {
-      await register(username, email, password, birthDate);
-      // Reset form on success
-      setUsername('');
-      setEmail('');
-      setPassword('');
-      setBirthDate('');
+      const payload: RegisterRequestDto = {
+        name: username,
+        email,
+        password,
+        birthday: birthDate,
+      }
+      const response = await loginClient.register(payload)
+
+      if (!response?.token) {
+        throw new Error('Registration succeeded but no access token was returned.')
+      }
+
+      persistAuthData(response.token)
+      navigate('/dashboard')
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Registration failed. Please try again.';
-      setLocalError(message);
+      const message = err instanceof Error ? err.message : 'Registration failed. Please try again.'
+      setError(message)
+    } finally {
+      setLoading(false)
     }
-  };
+  }
 
   return {
     username,
@@ -94,7 +115,7 @@ export const useRegister = (): UseRegisterReturn => {
     setBirthDate,
     handleRegister,
     loading,
-    error: localError,
-  };
-};
+    error,
+  }
+}
 
