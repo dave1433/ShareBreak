@@ -89,7 +89,7 @@ function Dashboard() {
     <div className="min-h-screen bg-bg font-sans text-center">
       {/* Header */}
       <header className="bg-header bg-opacity-40 flex justify-between items-center px-10 py-4">
-        <Link to="/">
+        <Link to="/dashboard">
           <img src={bigLogo} alt="Reset Logo" className="h-10 w-auto" />
         </Link>
         <div className="flex gap-4 items-center">
@@ -101,11 +101,6 @@ function Dashboard() {
                   {pendingCount}
                 </span>
               )}
-            </button>
-          </Link>
-          <Link to="/profile">
-            <button className="bg-border font-bold px-6 py-2 rounded-lg text-text transition-all duration-300 hover:bg-accent hover:text-white hover:shadow-lg hover:scale-105">
-              Profile
             </button>
           </Link>
           <button
